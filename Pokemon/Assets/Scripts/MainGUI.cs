@@ -194,4 +194,9 @@ public class MainGUI : MonoBehaviour
 		_popUp.SetActive (false);
 		_messageInUse = false;
 	}
+	//
+	public void LogbookClick()
+	{
+
+	}
 }

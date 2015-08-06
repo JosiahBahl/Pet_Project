@@ -140,6 +140,7 @@ public class ControlSystem : MonoBehaviour
 	{
 		_player = _playerObject.GetComponent<Player> ();
 		_player.Intiate();
+		print(Application.persistentDataPath);
 		if(File.Exists(Application.persistentDataPath+"/player.dat"))
 		{
 			BinaryFormatter bf = new BinaryFormatter();

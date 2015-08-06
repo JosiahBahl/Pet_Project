@@ -56,6 +56,9 @@ public class BattleGUI : MonoBehaviour
 	//
 	public void UpdateStats(int x)
 	{
+		_attack.gameObject.SetActive(true);
+		_defend.gameObject.SetActive(true);
+		_special.gameObject.SetActive(true);
 		_current = BattleSystem._battleSystem._partyStats [x];
 		_name.text = "Name: "+_current._name;
 		_class.text = "Class: "+_current._class;
@@ -161,9 +164,6 @@ public class BattleGUI : MonoBehaviour
 	//
 	public void IssueCommand()
 	{
-		_attack.gameObject.SetActive(true);
-		_defend.gameObject.SetActive(true);
-		_special.gameObject.SetActive(true);
 		_back.gameObject.SetActive(false);
 		_issue.gameObject.SetActive(false);
 		if (BattleSystem._battleSystem._userActions [_selectIndex]._type == "attack") 
