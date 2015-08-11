@@ -16,7 +16,11 @@ public class BattleGUI : MonoBehaviour
 	public Text _damage;
 	public Text _mDamage;
 	//
+	public Text _lootName;
+	//
 	public int _selectIndex = 0;
+	//
+	public bool _givingExp = false;
 	//
 	public Button _attack;
 	public Button _defend;
@@ -24,7 +28,12 @@ public class BattleGUI : MonoBehaviour
 	public Button _back;
 	public Button _issue;
 	//
+	public Slider _expBar;
+	//
 	public Stats _current;
+	//
+	public GameObject _battleStats;
+	public GameObject _lootScreen;
 	// Use this for initialization
 	void Awake () 
 	{
@@ -79,7 +88,6 @@ public class BattleGUI : MonoBehaviour
 		} 
 		else 
 		{
-			print("No special");
 			_special.gameObject.SetActive (false);
 		}		
 		if(BattleSystem._battleSystem._amountOfContracts == 1)
@@ -117,10 +125,8 @@ public class BattleGUI : MonoBehaviour
 			Forward();
 			if(!_current._spAttack.Contains("group"))
 			{
-				print("special");
 				if(_current._spAttack.Contains("damage"))
 				{
-					print("damage");
 					BattleSystem._battleSystem.SetTarget(0, "enemy");
 				}
 				else if(_current._spAttack.Contains ("heal"))
@@ -187,5 +193,39 @@ public class BattleGUI : MonoBehaviour
 		}
 		BattleSystem._battleSystem._userActions [_selectIndex]._finished = true;
 		BattleSystem._battleSystem.EndTurn ();
+	}
+	//
+	public IEnumerator LootScreen(Stats[] enemys, Stats[] contracts)
+	{
+		_battleStats.SetActive(false);
+		_lootScreen.SetActive(true);
+		int exp = 0;
+		for(int i = 0; i < enemys.Length;i++)
+		{
+			exp += enemys[i]._expDrop*enemys[i]._level;
+		}
+		exp = exp / contracts.Length;
+		for(int i = 0; i < contracts.Length; i++)
+		{
+			if(contracts[i]._name != "PlaceHolder")
+			{
+				_lootName.text = contracts[i]._name;
+				_expBar.value = contracts[i]._exp;
+				_givingExp = true;
+				for(int e = 0; e < exp; e++)
+				{
+					_expBar.value++;
+					if(_expBar.value == 100)
+					{
+						contracts[i].LevelUp();
+						_expBar.value = 0;
+					}
+					yield return new WaitForSeconds(.1f);
+				}
+				_givingExp = false;
+				yield return new WaitForSeconds(2f);
+			}
+		}
+		yield return null;
 	}
 }

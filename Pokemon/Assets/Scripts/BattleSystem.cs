@@ -37,6 +37,9 @@ public class BattleSystem : MonoBehaviour
 	public Texture _redArrow;
 	//
 	public bool _attacking = false;
+	public bool _stopUpdate = false;
+	public bool _won = false;
+	public static bool _endingBattle = false;
 	// Use this for initialization
 	public void Awake()
 	{
@@ -102,12 +105,17 @@ public class BattleSystem : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-	
+		if(_endingBattle && !_stopUpdate)
+		{
+			Won();
+			_stopUpdate = true;
+		}
 	}
+	//
 	void OnGUI()
 	{
 		GUI.matrix = Matrix4x4.TRS(new Vector3(1,1,1), Quaternion.identity, new Vector3(_xResolution, _yResolution, 1));
-		if(MainGUI._mainGUI._slideIn && !_attacking)
+		if(MainGUI._mainGUI._slideIn && !_attacking && !_endingBattle)
 		{
 			if((Input.GetMouseButtonDown(0)) && (_touchRect.Contains(Event.current.mousePosition))) 
 			{
@@ -365,14 +373,16 @@ public class BattleSystem : MonoBehaviour
 		} 
 		else 
 		{
+			_attacking = false;
 			_battleGUI.setBattleText("All enemys defeated, you have won the battle.");
-			Won ();
+			_endingBattle = true;
+			_won = true;
 			StopCoroutine(Orders());
 		}
 		if (ContractsAllDead ()) 
 		{
 			_battleGUI.setBattleText("All your contracts have fallen in battle, you have lost.");
-			Lost();
+			_endingBattle = true;
 			StopCoroutine(Orders());
 		}
 		for (int i = 0; i < _userActions.Length; i++) 
@@ -470,7 +480,9 @@ public class BattleSystem : MonoBehaviour
 	//
 	public void Won()
 	{
-
+		_battleGUI.enabled = false;
+		_indicator.gameObject.SetActive(false);
+		StartCoroutine(_battleGUI.LootScreen(_enemyStats, _partyStats));
 	}
 	//
 	public void Lost()
