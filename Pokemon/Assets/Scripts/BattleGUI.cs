@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Threading;
 
 public class BattleGUI : MonoBehaviour 
 {
@@ -27,6 +28,7 @@ public class BattleGUI : MonoBehaviour
 	public Button _special;
 	public Button _back;
 	public Button _issue;
+	public Button _next;
 	//
 	public Slider _expBar;
 	//
@@ -34,6 +36,8 @@ public class BattleGUI : MonoBehaviour
 	//
 	public GameObject _battleStats;
 	public GameObject _lootScreen;
+	//Wait Handle for puasing the flow of logic until the user does somthing
+	public EventWaitHandle _nextContract = new EventWaitHandle(false, EventResetMode.AutoReset);
 	// Use this for initialization
 	void Awake () 
 	{
@@ -195,7 +199,7 @@ public class BattleGUI : MonoBehaviour
 		BattleSystem._battleSystem.EndTurn ();
 	}
 	//
-	public IEnumerator LootScreen(Stats[] enemys, Stats[] contracts)
+	public void LootScreen(Stats[] enemys, Stats[] contracts)
 	{
 		_battleStats.SetActive(false);
 		_lootScreen.SetActive(true);
@@ -209,23 +213,36 @@ public class BattleGUI : MonoBehaviour
 		{
 			if(contracts[i]._name != "PlaceHolder")
 			{
-				_lootName.text = contracts[i]._name;
-				_expBar.value = contracts[i]._exp;
-				_givingExp = true;
-				for(int e = 0; e < exp; e++)
-				{
-					_expBar.value++;
-					if(_expBar.value == 100)
-					{
-						contracts[i].LevelUp();
-						_expBar.value = 0;
-					}
-					yield return new WaitForSeconds(.1f);
-				}
-				_givingExp = false;
-				yield return new WaitForSeconds(2f);
+				StartCoroutine(CalculateExp(contracts[i], exp));
+				_nextContract.WaitOne();
 			}
 		}
-		yield return null;
+		_next.gameObject.SetActive(false);
+		return;
+	}
+	//
+	public IEnumerator CalculateExp(Stats contract, int exp)
+	{
+		_lootName.text = contract._name;
+		_expBar.value = contract._exp;
+		_givingExp = true;
+		_next.gameObject.SetActive(false);
+		for(int e = 0; e < exp; e++)
+		{
+			_expBar.value++;
+			if(_expBar.value == 100)
+			{
+				contract.LevelUp();
+				_expBar.value = 0;
+			}
+			yield return new WaitForSeconds(.1f);
+		}
+		_next.gameObject.SetActive(true);
+		_givingExp = false;
+	}
+	//
+	public void NextContract()
+	{
+		_nextContract.Set();
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Threading;
 
 public class BattleSystem : MonoBehaviour 
 {
@@ -107,7 +108,7 @@ public class BattleSystem : MonoBehaviour
 	{
 		if(_endingBattle && !_stopUpdate)
 		{
-			Won();
+			StartCoroutine(Won());
 			_stopUpdate = true;
 		}
 	}
@@ -478,11 +479,15 @@ public class BattleSystem : MonoBehaviour
 		return (cont==_amountOfContracts)?true:false;
 	}
 	//
-	public void Won()
+	public IEnumerator Won()
 	{
 		_battleGUI.enabled = false;
 		_indicator.gameObject.SetActive(false);
-		StartCoroutine(_battleGUI.LootScreen(_enemyStats, _partyStats));
+		Thread t = new Thread(() => _battleGUI.LootScreen(_enemyStats, _partyStats));
+		while(t.IsAlive)
+		{
+			yield return null;
+		}
 	}
 	//
 	public void Lost()
