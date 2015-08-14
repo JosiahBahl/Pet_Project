@@ -20,6 +20,8 @@ public class BattleGUI : MonoBehaviour
 	public Text _lootName;
 	//
 	public int _selectIndex = 0;
+	private int _lootIndex = 0;
+	private int _expToGive = 0;
 	//
 	public bool _givingExp = false;
 	//
@@ -36,8 +38,6 @@ public class BattleGUI : MonoBehaviour
 	//
 	public GameObject _battleStats;
 	public GameObject _lootScreen;
-	//Wait Handle for puasing the flow of logic until the user does somthing
-	public EventWaitHandle _nextContract = new EventWaitHandle(false, EventResetMode.AutoReset);
 	// Use this for initialization
 	void Awake () 
 	{
@@ -54,7 +54,7 @@ public class BattleGUI : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-	
+
 	}
 	//
 	public void setBattleText(string x)
@@ -79,24 +79,27 @@ public class BattleGUI : MonoBehaviour
 		_damage.text = "Damage: "+_current._currentDamage;
 		_mDamage.text = "Magic Damage: "+_current._currentMDamage;
 		//
-		if (_current._spAttack != null) 
+		if(!BattleSystem._endingBattle)
 		{
-			if (_current._spAttack._currentTime != _current._spAttack._rechargeTime) 
+			if(_current._spAttack != null)
 			{
-				_special.gameObject.SetActive (false);
-			} 
-			else 
-			{
-				_special.gameObject.SetActive (true);
+				if(_current._spAttack._currentTime != _current._spAttack._rechargeTime)
+				{
+					_special.gameObject.SetActive(false);
+				}
+				else
+				{
+					_special.gameObject.SetActive(true);
+				}
 			}
-		} 
-		else 
-		{
-			_special.gameObject.SetActive (false);
-		}		
-		if(BattleSystem._battleSystem._amountOfContracts == 1)
-		{
-			_defend.gameObject.SetActive(false);
+			else
+			{
+				_special.gameObject.SetActive(false);
+			}		
+			if(BattleSystem._battleSystem._amountOfContracts == 1)
+			{
+				_defend.gameObject.SetActive(false);
+			}
 		}
 		_selectIndex = x;
 	}
@@ -201,48 +204,62 @@ public class BattleGUI : MonoBehaviour
 	//
 	public void LootScreen(Stats[] enemys, Stats[] contracts)
 	{
-		_battleStats.SetActive(false);
+		_attack.gameObject.SetActive(false);
+		_defend.gameObject.SetActive(false);
+		_special.gameObject.SetActive(false);
 		_lootScreen.SetActive(true);
-		int exp = 0;
+		_next.gameObject.SetActive(false);
+		_expToGive = 0;
 		for(int i = 0; i < enemys.Length;i++)
 		{
-			exp += enemys[i]._expDrop*enemys[i]._level;
+			_expToGive += enemys[i]._expDrop*enemys[i]._level;
 		}
-		exp = exp / contracts.Length;
-		for(int i = 0; i < contracts.Length; i++)
-		{
-			if(contracts[i]._name != "PlaceHolder")
-			{
-				StartCoroutine(CalculateExp(contracts[i], exp));
-				_nextContract.WaitOne();
-			}
-		}
-		_next.gameObject.SetActive(false);
-		return;
+		_expToGive = _expToGive / contracts.Length;
+		NextContract();
 	}
 	//
-	public IEnumerator CalculateExp(Stats contract, int exp)
+	public IEnumerator CalculateExp(Stats contract)
 	{
 		_lootName.text = contract._name;
 		_expBar.value = contract._exp;
 		_givingExp = true;
-		_next.gameObject.SetActive(false);
-		for(int e = 0; e < exp; e++)
+		for(int e = 0; e < _expToGive; e++)
 		{
 			_expBar.value++;
 			if(_expBar.value == 100)
 			{
 				contract.LevelUp();
+				contract.ResetCurrentStats();
 				_expBar.value = 0;
 			}
 			yield return new WaitForSeconds(.1f);
 		}
-		_next.gameObject.SetActive(true);
 		_givingExp = false;
 	}
 	//
 	public void NextContract()
 	{
-		_nextContract.Set();
+		bool _watcher = true;
+		_next.gameObject.SetActive(true);
+		while(_watcher)
+		{
+			if(BattleSystem._battleSystem._partyStats[_lootIndex]._name != "PlaceHolder")
+			{
+				UpdateStats(_lootIndex);
+				StartCoroutine(CalculateExp(BattleSystem._battleSystem._partyStats[_lootIndex]));
+				_watcher = false;
+				_lootIndex++;
+				break;
+			}
+			else if(_lootIndex < 3)
+			{
+				_lootIndex++;
+			}
+			else
+			{
+				BattleSystem._battleSystem.EndBattle();
+				break;
+			}
+		}
 	}
 }

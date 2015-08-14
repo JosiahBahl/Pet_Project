@@ -74,12 +74,10 @@ public class ControlSystem : MonoBehaviour
 			_camera = GameObject.Find("Camera");
 			_playerObject = GameObject.Find("Player");
 			//
-			//float _ran = Random.Range (1, 10);
 			_timer = new System.Timers.Timer(30000);
 			_timer.AutoReset = true;
 			_timer.Elapsed += OnTimerElapsed;
 			//
-			//_timeOut = new System.Timers.Timer(300000);
 			_timeOutTimer = new System.Timers.Timer(30000);
 			_timeOutTimer.Elapsed += OnTimeOutElapsed;
 			_timeOutTimer.AutoReset = true;
@@ -88,7 +86,7 @@ public class ControlSystem : MonoBehaviour
 		}
 		else if(_control != this)
 		{
-			Destroy(this);
+			Destroy(this.gameObject);
 		}
 	}
 	// Use this for initialization
@@ -238,18 +236,35 @@ public class ControlSystem : MonoBehaviour
 	//
 	public void OnLevelWasLoaded()
 	{
-		if (Application.loadedLevel >= 3) 
+		if(Application.loadedLevel >= 3)
 		{
 			System.DateTime time = System.DateTime.Now;
-			if ((time.Hour > 18) || (time.Hour < 6)) {
-					RenderSettings.skybox = (Material)Resources.Load ("SkyBox/MoonShine Skybox");
-					Light light = _camera.GetComponentInChildren<Light> ();
-					light.intensity = .2f;
-			} else {
-					RenderSettings.skybox = (Material)Resources.Load ("SkyBox/Sunny2 Skybox");
-					Light light = _camera.GetComponentInChildren<Light> ();
-					light.intensity = .5f;
+			if((time.Hour > 18) || (time.Hour < 6))
+			{
+				RenderSettings.skybox = (Material)Resources.Load("SkyBox/MoonShine Skybox");
+				Light light = _camera.GetComponentInChildren<Light>();
+				light.intensity = .2f;
 			}
+			else
+			{
+				RenderSettings.skybox = (Material)Resources.Load("SkyBox/Sunny2 Skybox");
+				Light light = _camera.GetComponentInChildren<Light>();
+				light.intensity = .5f;
+			}
+		}
+		else if(Application.loadedLevel == 2)
+		{
+			_camera = GameObject.Find("Camera");
+			_camera.transform.position = new Vector3(0,0,0);
+			_camera.transform.rotation = new Quaternion(0,0,0,0);
+			_timer = new System.Timers.Timer(30000);
+			_timer.AutoReset = true;
+			_timer.Elapsed += OnTimerElapsed;
+			//
+			_timeOutTimer = new System.Timers.Timer(30000);
+			_timeOutTimer.Elapsed += OnTimeOutElapsed;
+			_timeOutTimer.AutoReset = true;
+			//StartGame();
 		}
 	}
 	//

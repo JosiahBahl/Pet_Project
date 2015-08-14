@@ -51,7 +51,7 @@ public class MainGUI : MonoBehaviour
 		}
 		else if(_mainGUI != this)
 		{
-			Destroy(this);
+			Destroy(this.gameObject);
 		}
 	}
 	//Set screen resolution for GUi scaling

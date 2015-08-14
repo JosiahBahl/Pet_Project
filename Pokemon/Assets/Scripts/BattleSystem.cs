@@ -41,6 +41,8 @@ public class BattleSystem : MonoBehaviour
 	public bool _stopUpdate = false;
 	public bool _won = false;
 	public static bool _endingBattle = false;
+	//
+	public Thread _lootThread;
 	// Use this for initialization
 	public void Awake()
 	{
@@ -108,8 +110,8 @@ public class BattleSystem : MonoBehaviour
 	{
 		if(_endingBattle && !_stopUpdate)
 		{
-			StartCoroutine(Won());
 			_stopUpdate = true;
+			_battleGUI.LootScreen(_enemyStats, _partyStats);
 		}
 	}
 	//
@@ -378,12 +380,14 @@ public class BattleSystem : MonoBehaviour
 			_battleGUI.setBattleText("All enemys defeated, you have won the battle.");
 			_endingBattle = true;
 			_won = true;
+			_indicator.gameObject.SetActive(false);
 			StopCoroutine(Orders());
 		}
 		if (ContractsAllDead ()) 
 		{
 			_battleGUI.setBattleText("All your contracts have fallen in battle, you have lost.");
 			_endingBattle = true;
+			_indicator.gameObject.SetActive(false);
 			StopCoroutine(Orders());
 		}
 		for (int i = 0; i < _userActions.Length; i++) 
@@ -479,19 +483,8 @@ public class BattleSystem : MonoBehaviour
 		return (cont==_amountOfContracts)?true:false;
 	}
 	//
-	public IEnumerator Won()
+	public void EndBattle()
 	{
-		_battleGUI.enabled = false;
-		_indicator.gameObject.SetActive(false);
-		Thread t = new Thread(() => _battleGUI.LootScreen(_enemyStats, _partyStats));
-		while(t.IsAlive)
-		{
-			yield return null;
-		}
-	}
-	//
-	public void Lost()
-	{
-
+		Application.LoadLevel(2);
 	}
 }

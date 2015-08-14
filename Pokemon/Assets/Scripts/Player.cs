@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
 		}
 		else if(_player != this)
 		{
-			Destroy(this);
+			Destroy(this.gameObject);
 		}
 	}
 	//
