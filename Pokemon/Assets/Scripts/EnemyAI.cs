@@ -10,7 +10,7 @@ public class EnemyAI : MonoBehaviour
 	public bool _healer = false;
 	public bool _thief = false;
 	//
-	public Stats _target = new Stats ();
+	public Stats _target;
 	public Stats _user;
 	// Use this for initialization
 	void Start () 

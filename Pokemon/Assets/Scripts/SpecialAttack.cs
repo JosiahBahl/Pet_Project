@@ -5,6 +5,7 @@ public class SpecialAttack : MonoBehaviour
 {
 	//
 	public string _name = "";
+	public string _id = "";
 	public string[] _type = new string[3];
 	public int _damage = 0;
 	//

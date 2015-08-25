@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Stats : MonoBehaviour 
 {
@@ -181,15 +182,34 @@ public class Stats : MonoBehaviour
 	public string UseSpecial(Stats[] targets)
 	{
 		_spAttack._currentTime = 0;
-		int length = targets.Length;
 		string returnString = "";
-		if(_spAttack.Contains("melee"))
+		if(!_spAttack.Contains("group"))
 		{
-			returnString = _name+" used "+_spAttack._name+" to attack "+targets[0]._name+" for "+targets[0].TakeDamage(_spAttack)+" damage.";
+			if(_spAttack.Contains("melee"))
+			{
+				returnString = _name + " used " + _spAttack._name + " to attack " + targets[0]._name + " for " + targets[0].TakeDamage(_spAttack) + " damage.";
+			}
+			else if(_spAttack.Contains("heal"))
+			{
+				returnString = _name + " used " + _spAttack._name + " to heal " + targets[0]._name + " for " + targets[0].TakeDamage(_spAttack) + " health.";
+			}
 		}
-		else if (_spAttack.Contains("heal"))
+		else
 		{
-
+			if(_spAttack.Contains("melee"))
+			{
+				for(int i = 0; i < targets.Length; i++)
+				{
+					returnString += _name + " used " + _spAttack._name + " to attack " + targets[i]._name + " for " + targets[i].TakeDamage(_spAttack) + " damage.";
+				}
+			}
+			else if(_spAttack.Contains("heal"))
+			{
+				for(int i = 0; i < targets.Length; i++)
+				{
+					returnString += _name + " used " + _spAttack._name + " to heal " + targets[i]._name + " for " + targets[i].TakeDamage(_spAttack) + " health.";
+				}
+			}
 		}
 		return returnString;
 	}
@@ -237,8 +257,13 @@ public class Stats : MonoBehaviour
 	//
 	public void SetSpecial(string name)
 	{
-		Object temp = Instantiate((GameObject)Resources.Load ("Sepcials/" + name));
-		GameObject special = GameObject.Find (temp.name);
+		if(_spAttack != null)
+		{
+			Destroy(_spAttack.gameObject);
+			_spAttack = null;
+		}
+		Instantiate(Resources.Load("Specials/" + name));
+		GameObject special = GameObject.Find (name+"(Clone)");
 		special.transform.parent = this.gameObject.transform;
 		_spAttack = special.GetComponent<SpecialAttack> ();
 		special.name = _spAttack._name;

@@ -145,7 +145,7 @@ public class ControlSystem : MonoBehaviour
 			PlayerData player = (PlayerData)bf.Deserialize(file);
 			setPlayer(_player, player);
 			file.Close ();
-			_player.AddContract("Thief");
+			//_player.AddContract("Thief");
 			StartGame();
 		}
 		else
@@ -163,6 +163,8 @@ public class ControlSystem : MonoBehaviour
 		Instantiate (Resources.Load ("Inventory"));
 		_inventory = GameObject.FindGameObjectWithTag ("Inventory");
 		_inventory.name = "Inventory";
+		//
+		SetStage();
 	}
 	//
 	public void CreateUser()
@@ -236,35 +238,22 @@ public class ControlSystem : MonoBehaviour
 	//
 	public void OnLevelWasLoaded()
 	{
-		if(Application.loadedLevel >= 3)
+		if(_control == this)
 		{
-			System.DateTime time = System.DateTime.Now;
-			if((time.Hour > 18) || (time.Hour < 6))
+			if(Application.loadedLevel == 2)
 			{
-				RenderSettings.skybox = (Material)Resources.Load("SkyBox/MoonShine Skybox");
-				Light light = _camera.GetComponentInChildren<Light>();
-				light.intensity = .2f;
+				_camera = GameObject.Find("Camera");
+				_camera.transform.position = new Vector3(0, 0, 0);
+				_camera.transform.rotation = new Quaternion(0, 0, 0, 0);
+				_timer = new System.Timers.Timer(30000);
+				_timer.AutoReset = true;
+				_timer.Elapsed += OnTimerElapsed;
+				//
+				_timeOutTimer = new System.Timers.Timer(30000);
+				_timeOutTimer.Elapsed += OnTimeOutElapsed;
+				_timeOutTimer.AutoReset = true;
+				StartGame();
 			}
-			else
-			{
-				RenderSettings.skybox = (Material)Resources.Load("SkyBox/Sunny2 Skybox");
-				Light light = _camera.GetComponentInChildren<Light>();
-				light.intensity = .5f;
-			}
-		}
-		else if(Application.loadedLevel == 2)
-		{
-			_camera = GameObject.Find("Camera");
-			_camera.transform.position = new Vector3(0,0,0);
-			_camera.transform.rotation = new Quaternion(0,0,0,0);
-			_timer = new System.Timers.Timer(30000);
-			_timer.AutoReset = true;
-			_timer.Elapsed += OnTimerElapsed;
-			//
-			_timeOutTimer = new System.Timers.Timer(30000);
-			_timeOutTimer.Elapsed += OnTimeOutElapsed;
-			_timeOutTimer.AutoReset = true;
-			//StartGame();
 		}
 	}
 	//
@@ -302,7 +291,7 @@ public class ControlSystem : MonoBehaviour
 			statsData[i]._type = stats[i]._type;
 			if(stats[i]._spAttack != null)
 			{
-				statsData[i]._specialAttack = stats[i]._spAttack._name;
+				statsData[i]._specialAttack = stats[i]._spAttack._id;
 			}
 			else
 			{
@@ -331,57 +320,70 @@ public class ControlSystem : MonoBehaviour
 	{
 		player._name = playerData._name;
 		player._level = playerData._level;
-		setStats (player._partyStats, playerData._partyStats);
-		setContracts(player, player._partyStats);
+		setContracts(player, playerData._partyStats);
+		setStats (player, playerData._partyStats);
 	}
 	//
-	public void setContracts(Player player, Stats[] stats)
+	public void setContracts(Player player, StatsData[] statsData)
 	{
-		for(int i = 0; i < stats.Length; i++)
+		for(int i = 0; i < 4; i++)
 		{
-			GameObject newMember = (GameObject)Resources.Load ("Contracts/" + stats[i]._name);
+			GameObject newMember = (GameObject)Resources.Load ("Contracts/" + statsData[i]._name);
 			Destroy(player._party[i]);
 			player._party[i] = (GameObject)Instantiate(newMember);
 			player._party[i].transform.parent = player.transform;
-			player._party[i].name = stats[i]._id;
-			Stats newData = player._party[i].GetComponent<Stats>();
-			newData.setStats(stats[i]);
-			stats[i] = newData;
+			player._party[i].name = statsData[i]._id;
+			player._partyStats[i] = _player._party[i].GetComponent<Stats>();
 		}
 	}
 	//
-	public void setStats(Stats[] stats, StatsData[] statsData)
+	public void setStats(Player player, StatsData[] statsData)
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			stats[i]._name = statsData[i]._name;
-			stats[i]._class = statsData[i]._class;
-			stats[i]._id = statsData[i]._id;
-			stats[i]._type = statsData[i]._type;
-			if(statsData[i]._specialAttack != "")
-			{
-				stats[i].SetSpecial(statsData[i]._specialAttack);
-			}
-			else
-			{
-				
-			}
+			player._partyStats[i]._name = statsData[i]._name;
+			player._partyStats[i]._class = statsData[i]._class;
+			player._partyStats[i]._id = statsData[i]._id;
+			player._partyStats[i]._type = statsData[i]._type;
 			//
-			stats[i]._health = statsData[i]._health;
+			player._partyStats[i]._health = statsData[i]._health;
 			//
-			stats[i]._resistance = statsData[i]._resistance;
-			stats[i]._defence = statsData[i]._defence;
+			player._partyStats[i]._resistance = statsData[i]._resistance;
+			player._partyStats[i]._defence = statsData[i]._defence;
 			//
-			stats[i]._damage = statsData[i]._damage;
-			stats[i]._magicDamage = statsData[i]._magicDamage;
+			player._partyStats[i]._damage = statsData[i]._damage;
+			player._partyStats[i]._magicDamage = statsData[i]._magicDamage;
 			//
-			stats[i]._level = statsData[i]._level;
-			stats[i]._exp = statsData[i]._exp;
+			player._partyStats[i]._level = statsData[i]._level;
+			player._partyStats[i]._exp = statsData[i]._exp;
 			//
 			for(int x = 0; x < 5; x++)
 			{
-				stats[i]._statGrowth[x] = statsData[i]._statGrowth[x];
+				player._partyStats[i]._statGrowth[x] = statsData[i]._statGrowth[x];
 			}
+			//
+			if(statsData[i]._specialAttack != "")
+			{
+				player._partyStats[i].SetSpecial(statsData[i]._specialAttack);
+			}
+			else{}
+		}
+	}
+	//
+	public void SetStage()
+	{
+		System.DateTime time = System.DateTime.Now;
+		if((time.Hour > 18) || (time.Hour < 6))
+		{
+			RenderSettings.skybox = (Material)Resources.Load("SkyBox/MoonShine Skybox");
+			Light light = _camera.GetComponentInChildren<Light>();
+			light.intensity = .2f;
+		}
+		else
+		{
+			RenderSettings.skybox = (Material)Resources.Load("SkyBox/Sunny2 Skybox");
+			Light light = _camera.GetComponentInChildren<Light>();
+			light.intensity = .5f;
 		}
 	}
 	//
@@ -396,7 +398,7 @@ public class ControlSystem : MonoBehaviour
 		_timeOutTimer.Close ();
 		Resources.UnloadUnusedAssets ();
 		_running = false;
-		//Save ();
+		Save ();
 	}
 
 }

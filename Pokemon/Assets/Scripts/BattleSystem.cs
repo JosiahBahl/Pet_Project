@@ -7,6 +7,8 @@ public class BattleSystem : MonoBehaviour
 	//
 	public GameObject _indicator;
 	public GameObject _cameraSpawn;
+	public GameObject _contractStatHolder;
+	public GameObject _enemyStatHolder;
 	//
 	public Stats[] _partyStats;
 	public Stats[] _enemyStats;
@@ -73,11 +75,13 @@ public class BattleSystem : MonoBehaviour
   		{
 			Instantiate(_enemy);
 			_amountOfEnemys++;
+			_enemyStatHolder.AddComponent<Stats>();
+			_enemyStatHolder.AddComponent<EnemyAI>();
 		}
 		//Get all enemys
 		_enemys = GameObject.FindGameObjectsWithTag ("Enemy");
-		_enemyAI = new EnemyAI[_amountOfEnemys];
-		_enemyStats = new Stats[_amountOfEnemys];
+		_enemyAI = _enemyStatHolder.GetComponents<EnemyAI>();
+		_enemyStats = _enemyStatHolder.GetComponents<Stats>();
 		int greatestLevel = Player._player.GetGreatestLevel ();
 		int median = Player._player.GetMedianLevel ();
 		//Set enemy IDs, spawns and get stats
@@ -261,6 +265,7 @@ public class BattleSystem : MonoBehaviour
 			_indicator.SetActive(false);
 			_selectIndex = 0;
 			_turn = 0;
+			_battleGUI.DisableCommands();
 			StartCoroutine(Orders());
 		} 
 		else 
@@ -277,8 +282,8 @@ public class BattleSystem : MonoBehaviour
 	//
 	public IEnumerator Orders()
 	{
-		Stats target = new Stats();
-		Stats[] targets;
+		Stats target;
+		Stats[] targets = _enemyStats;
 		Stats user;
 		for(int i = 0; i < _amountOfContracts; i++)
 		{
@@ -305,7 +310,6 @@ public class BattleSystem : MonoBehaviour
 					user = getPlayerStats(_userActions[i]._user);
 					if(!user._spAttack._name.Contains("group"))
 					{
-						targets = new Stats[1];
 						if(!user._spAttack._name.Contains("heal"))
 						{
 							targets[0] = getEnemyStats(_userActions[i]._target);
@@ -317,15 +321,7 @@ public class BattleSystem : MonoBehaviour
 					}
 					else
 					{
-						targets = new Stats[_amountOfEnemys];
-						if(!user._spAttack._name.Contains("heal"))
-						{
-							for(int x = 0; x < _amountOfEnemys; x++)
-							{
-								targets[x] = _enemyStats[x];
-							}
-						}
-						else
+						if(user._spAttack._name.Contains("heal"))
 						{
 							for(int x = 0; x < _amountOfEnemys; x++)
 							{
@@ -410,7 +406,7 @@ public class BattleSystem : MonoBehaviour
 	//
 	public Stats getEnemyStats(GameObject x)
 	{
-		Stats temp = new Stats ();
+		Stats temp = null;
 		for(int i = 0; i < 4; i++)
 		{
 			if(x.name == _enemyStats[i]._id)
@@ -424,7 +420,7 @@ public class BattleSystem : MonoBehaviour
 	//
 	public Stats getPlayerStats(GameObject x)
 	{
-		Stats temp = new Stats ();
+		Stats temp = null;
 		for(int i = 0; i < 4; i++)
 		{
 			if(x.name == _partyStats[i]._id)
@@ -485,6 +481,8 @@ public class BattleSystem : MonoBehaviour
 	//
 	public void EndBattle()
 	{
+		_stopUpdate = false;
+		_endingBattle = false;
 		Application.LoadLevel(2);
 	}
 }

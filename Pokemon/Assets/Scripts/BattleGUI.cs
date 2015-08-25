@@ -48,6 +48,7 @@ public class BattleGUI : MonoBehaviour
 	{
 		_back.gameObject.SetActive(false);
 		_issue.gameObject.SetActive(false);
+		_lootScreen.SetActive(false);
 		UpdateStats(0);
 		setBattleText ("Your Turn");
 	}
@@ -81,25 +82,7 @@ public class BattleGUI : MonoBehaviour
 		//
 		if(!BattleSystem._endingBattle)
 		{
-			if(_current._spAttack != null)
-			{
-				if(_current._spAttack._currentTime != _current._spAttack._rechargeTime)
-				{
-					_special.gameObject.SetActive(false);
-				}
-				else
-				{
-					_special.gameObject.SetActive(true);
-				}
-			}
-			else
-			{
-				_special.gameObject.SetActive(false);
-			}		
-			if(BattleSystem._battleSystem._amountOfContracts == 1)
-			{
-				_defend.gameObject.SetActive(false);
-			}
+			EnableCommands();
 		}
 		_selectIndex = x;
 	}
@@ -152,9 +135,7 @@ public class BattleGUI : MonoBehaviour
 	{
 		if (BattleSystem._battleSystem._userActions [_selectIndex]._step == 2) 
 		{
-			_attack.gameObject.SetActive(false);
-			_defend.gameObject.SetActive(false);
-			_special.gameObject.SetActive(false);
+			DisableCommands();
 			_back.gameObject.SetActive(true);
 			_issue.gameObject.SetActive(true);
 			BattleSystem._battleSystem._userActions [_selectIndex]._user = BattleSystem._battleSystem._contracts[_selectIndex];
@@ -163,9 +144,7 @@ public class BattleGUI : MonoBehaviour
 	//
 	public void Back()
 	{
-		_attack.gameObject.SetActive(true);
-		_defend.gameObject.SetActive(true);
-		_special.gameObject.SetActive(true);
+		EnableCommands();
 		_back.gameObject.SetActive(false);
 		_issue.gameObject.SetActive(false);
 		BattleSystem._battleSystem._userActions [_selectIndex].Back ();
@@ -174,9 +153,7 @@ public class BattleGUI : MonoBehaviour
 	//
 	public void IssueCommand()
 	{
-		_attack.gameObject.SetActive(true);
-		_defend.gameObject.SetActive(true);
-		_special.gameObject.SetActive(true);
+		EnableCommands();
 		_back.gameObject.SetActive(false);
 		_issue.gameObject.SetActive(false);
 		if (BattleSystem._battleSystem._userActions [_selectIndex]._type == "attack") 
@@ -204,9 +181,7 @@ public class BattleGUI : MonoBehaviour
 	//
 	public void LootScreen(Stats[] enemys, Stats[] contracts)
 	{
-		_attack.gameObject.SetActive(false);
-		_defend.gameObject.SetActive(false);
-		_special.gameObject.SetActive(false);
+		DisableCommands();
 		_lootScreen.SetActive(true);
 		_next.gameObject.SetActive(false);
 		_expToGive = 0;
@@ -215,26 +190,8 @@ public class BattleGUI : MonoBehaviour
 			_expToGive += enemys[i]._expDrop*enemys[i]._level;
 		}
 		_expToGive = _expToGive / contracts.Length;
+		print(_expToGive);
 		NextContract();
-	}
-	//
-	public IEnumerator CalculateExp(Stats contract)
-	{
-		_lootName.text = contract._name;
-		_expBar.value = contract._exp;
-		_givingExp = true;
-		for(int e = 0; e < _expToGive; e++)
-		{
-			_expBar.value++;
-			if(_expBar.value == 100)
-			{
-				contract.LevelUp();
-				contract.ResetCurrentStats();
-				_expBar.value = 0;
-			}
-			yield return new WaitForSeconds(.1f);
-		}
-		_givingExp = false;
 	}
 	//
 	public void NextContract()
@@ -260,6 +217,57 @@ public class BattleGUI : MonoBehaviour
 				BattleSystem._battleSystem.EndBattle();
 				break;
 			}
+		}
+	}
+	//
+	public IEnumerator CalculateExp(Stats contract)
+	{
+		_lootName.text = contract._name;
+		_expBar.value = contract._exp;
+		_givingExp = true;
+		for(int e = 0; e < _expToGive; e++)
+		{
+			_expBar.value++;
+			if(_expBar.value == 100)
+			{
+				contract.LevelUp();
+				contract.ResetCurrentStats();
+				_expBar.value = 0;
+			}
+			yield return new WaitForSeconds(.1f);
+		}
+		contract._exp = (int)_expBar.value;
+		_givingExp = false;
+	}
+	//
+	public void DisableCommands()
+	{
+		_attack.gameObject.SetActive(false);
+		_defend.gameObject.SetActive(false);
+		_special.gameObject.SetActive(false);
+	}
+	//
+	public void EnableCommands()
+	{
+		_attack.gameObject.SetActive(true);
+		if(_current._spAttack != null)
+		{
+			if(_current._spAttack._currentTime != _current._spAttack._rechargeTime)
+			{
+				_special.gameObject.SetActive(false);
+			}
+			else
+			{
+				_special.gameObject.SetActive(true);
+			}
+		}
+		else
+		{
+			_special.gameObject.SetActive(false);
+		}		
+		if(BattleSystem._battleSystem._amountOfContracts == 1)
+		{
+			_defend.gameObject.SetActive(false);
 		}
 	}
 }
