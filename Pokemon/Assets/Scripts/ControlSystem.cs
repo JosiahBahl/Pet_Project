@@ -38,8 +38,6 @@ public class ControlSystem : MonoBehaviour
 		//
 		public int _level = 1;
 		public int _exp = 0;
-		//
-		public int[] _statGrowth = new int[5];
 	}
 	//
 	public static ControlSystem _control;
@@ -252,6 +250,7 @@ public class ControlSystem : MonoBehaviour
 				_timeOutTimer = new System.Timers.Timer(30000);
 				_timeOutTimer.Elapsed += OnTimeOutElapsed;
 				_timeOutTimer.AutoReset = true;
+				MainGUI._mainGUI._deleateData.gameObject.SetActive (true);
 				StartGame();
 			}
 		}
@@ -308,11 +307,6 @@ public class ControlSystem : MonoBehaviour
 			//
 			statsData[i]._level = stats[i]._level;
 			statsData[i]._exp = stats[i]._exp;
-			//
-			for(int x = 0; x < 5; x++)
-			{
-				statsData[i]._statGrowth[x] = stats[i]._statGrowth[x];
-			}
 		}
 	}
 	//
@@ -356,11 +350,6 @@ public class ControlSystem : MonoBehaviour
 			//
 			player._partyStats[i]._level = statsData[i]._level;
 			player._partyStats[i]._exp = statsData[i]._exp;
-			//
-			for(int x = 0; x < 5; x++)
-			{
-				player._partyStats[i]._statGrowth[x] = statsData[i]._statGrowth[x];
-			}
 			//
 			if(statsData[i]._specialAttack != "")
 			{

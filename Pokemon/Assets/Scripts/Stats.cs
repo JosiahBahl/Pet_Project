@@ -64,7 +64,7 @@ public class Stats : MonoBehaviour
 			_statGrowth[i] = 1;
 		}
 	}
-	//
+	//Set Stats to the given stats
 	public void setStats(Stats x)
 	{
 		_name = x._name;
@@ -83,7 +83,7 @@ public class Stats : MonoBehaviour
 			_statGrowth[i] = x._statGrowth[i];
 		}
 	}
-	//
+	//Check the contracts exp to see if you need to level it up.
 	public void CheckLevel()
 	{
 		if(_exp > 100)
@@ -93,7 +93,7 @@ public class Stats : MonoBehaviour
 		}
 		else{}
 	}
-	//
+	//Level up the contract, Reset its stats back to the default.
 	public void LevelUp()
 	{
 		_level++;
@@ -104,7 +104,7 @@ public class Stats : MonoBehaviour
 		_magicDamage += _statGrowth[4];
 		ResetCurrentStats ();
 	}
-	//
+	//Level up the contract by a certain amount of levels.
 	public void LevelUp(int level)
 	{
 		for (int i = 0; i < level; i++) 
@@ -118,7 +118,7 @@ public class Stats : MonoBehaviour
 		}
 		ResetCurrentStats ();
 	}
-	//
+	//Take damage from a special attack
 	public int TakeDamage(SpecialAttack sp)
 	{
 		int damage = 0;
@@ -141,7 +141,7 @@ public class Stats : MonoBehaviour
 		}
 		return damage;
 	}
-	//
+	//Take damage from a normal attack
 	public int TakeDamage(Stats x)
 	{
 		int damage = 0;
@@ -167,25 +167,26 @@ public class Stats : MonoBehaviour
 		}
 		return damage;
 	}
-	//
+	//Function for when a contract is being defended by another.
 	public void Shielded(Stats x)
 	{
 		_defended = true;
 		_defendStats = x;
+		//------------------
 		int extraDefence = (int)Mathf.Ceil((.5f * x._defence));
 		int extraResistance = (int)Mathf.Ceil((.5f * x._resistance));
-
+		//------------------
 		_currentDefence += extraDefence;
 		_currentResistance += extraResistance;
 	}
-	//
+	//Use the contracts special, returns a string for output text.
 	public string UseSpecial(Stats[] targets)
 	{
 		_spAttack._currentTime = 0;
 		string returnString = "";
 		if(!_spAttack.Contains("group"))
 		{
-			if(_spAttack.Contains("melee"))
+			if(_spAttack.Contains("damage"))
 			{
 				returnString = _name + " used " + _spAttack._name + " to attack " + targets[0]._name + " for " + targets[0].TakeDamage(_spAttack) + " damage.";
 			}
@@ -196,7 +197,7 @@ public class Stats : MonoBehaviour
 		}
 		else
 		{
-			if(_spAttack.Contains("melee"))
+			if(_spAttack.Contains("damage"))
 			{
 				for(int i = 0; i < targets.Length; i++)
 				{
@@ -213,13 +214,13 @@ public class Stats : MonoBehaviour
 		}
 		return returnString;
 	}
-	//
+	//Function for when the health of the contract is below or equal to 0
 	public void Feint()
 	{
 		this.gameObject.SetActive (false);
 		_alive = false;
 	}
-	//
+	//Reset stats to the max amount.
 	public void ResetCurrentStats()
 	{
 		_currentHealth = _health;
@@ -228,7 +229,7 @@ public class Stats : MonoBehaviour
 		_currentDamage = _damage;
 		_currentMDamage = _magicDamage;
 	}
-	//
+	//Reset stat based on string
 	public void ResetStat(string stat)
 	{
 		switch (stat) 
@@ -254,7 +255,7 @@ public class Stats : MonoBehaviour
 			}
 		}
 	}
-	//
+	//Find a special attack thats name is string param, create it, set it to the contract, set the current special to the new one.
 	public void SetSpecial(string name)
 	{
 		if(_spAttack != null)

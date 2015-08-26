@@ -9,7 +9,7 @@ public class BattleSystem : MonoBehaviour
 	public GameObject _cameraSpawn;
 	public GameObject _contractStatHolder;
 	public GameObject _enemyStatHolder;
-	//
+	//Easier access to stats
 	public Stats[] _partyStats;
 	public Stats[] _enemyStats;
 	public EnemyAI[] _enemyAI;
@@ -43,8 +43,6 @@ public class BattleSystem : MonoBehaviour
 	public bool _stopUpdate = false;
 	public bool _won = false;
 	public static bool _endingBattle = false;
-	//
-	public Thread _lootThread;
 	// Use this for initialization
 	public void Awake()
 	{
@@ -54,9 +52,10 @@ public class BattleSystem : MonoBehaviour
 	//
 	void Start () 
 	{
-		//Set player contract spawn
+		//Grab contract stats and contract game objects
 		_partyStats = Player._player._partyStats;
 		_contracts = Player._player._party;
+		//Position contracts, count how many real contracts we have
 		for(int i = 0; i < _partyStats.Length; i++)
 		{
 			if(_partyStats[i]._name != "PlaceHolder")
@@ -67,7 +66,8 @@ public class BattleSystem : MonoBehaviour
 			}
 			else{}
 		}
-		//
+		//--------------------------------------------------------------
+		//Put enemy spawn code here, GPS and such.
 		GameObject _enemy = (GameObject)Resources.Load ("Enemys/Enemy");
 		int amount = Random.Range (1, _amountOfContracts);
 		//Instatiate Enemys
@@ -78,10 +78,12 @@ public class BattleSystem : MonoBehaviour
 			_enemyStatHolder.AddComponent<Stats>();
 			_enemyStatHolder.AddComponent<EnemyAI>();
 		}
-		//Get all enemys
+		//--------------------------------------------------------------
+		//Get all enemys, get their AI, get their Stats
 		_enemys = GameObject.FindGameObjectsWithTag ("Enemy");
 		_enemyAI = _enemyStatHolder.GetComponents<EnemyAI>();
 		_enemyStats = _enemyStatHolder.GetComponents<Stats>();
+		//Find the greatest level of the player and the median level.
 		int greatestLevel = Player._player.GetGreatestLevel ();
 		int median = Player._player.GetMedianLevel ();
 		//Set enemy IDs, spawns and get stats
@@ -91,27 +93,30 @@ public class BattleSystem : MonoBehaviour
 			_enemys[i].transform.position = _enemySpawn[i].transform.position;
 			_enemyStats[i] = _enemys[i].GetComponent<Stats>();
 			_enemyStats[i]._id = _enemys[i].name;
-			_enemyStats[i]._name = _enemyStats[i]._name+"_"+(1+i);
 			_enemyAI[i] = _enemys[i].GetComponent<EnemyAI>();
+			//Pick a random level between the median and greatest level.
 			_enemyStats[i].LevelUp(Random.Range(median, greatestLevel));
-
 		}
+		//Create array for contract actions.
 		_userActions = new Action[_amountOfContracts];
 		for(int i = 0; i < _userActions.Length; i++)
 		{
 			_userActions[i] = new Action();
 		}
-		//
+		//Set camera position
 		ControlSystem._control._camera.transform.position = _cameraSpawn.transform.position;
 		ControlSystem._control._camera.transform.rotation = _cameraSpawn.transform.rotation;
 		//
 		_xResolution = Screen.width/1024f;
 		_yResolution = Screen.height/768f;
+		//Set stage for time of day.
+		ControlSystem._control.SetStage();
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
+		//When the battle ends, start the loot screen.
 		if(_endingBattle && !_stopUpdate)
 		{
 			_stopUpdate = true;
@@ -121,9 +126,11 @@ public class BattleSystem : MonoBehaviour
 	//
 	void OnGUI()
 	{
+		//Scaleing GUI.
 		GUI.matrix = Matrix4x4.TRS(new Vector3(1,1,1), Quaternion.identity, new Vector3(_xResolution, _yResolution, 1));
 		if(MainGUI._mainGUI._slideIn && !_attacking && !_endingBattle)
 		{
+			//Raycast for selecting enemies and contracts
 			if((Input.GetMouseButtonDown(0)) && (_touchRect.Contains(Event.current.mousePosition))) 
 			{
 				RaycastHit hit = new RaycastHit();
@@ -168,20 +175,26 @@ public class BattleSystem : MonoBehaviour
 			}
 		}
 	}
+	//Set the indicator to a contract based on array index	
 	public void SetIndicator(int i)
 	{
-		_indicator.renderer.material.mainTexture = _blueArrow;
-		_indicator.transform.position = new Vector3(_contractSpawns[i].transform.position.x, 2.5f, _contractSpawns[i].transform.position.z);
-		_selectIndex = i;
-		_battleGUI.UpdateStats(i);
+		if(!_userActions[i]._finished)
+		{
+			_indicator.renderer.material.mainTexture = _blueArrow;
+			_indicator.transform.position = new Vector3(_contractSpawns[i].transform.position.x, 2.5f, _contractSpawns[i].transform.position.z);
+			_selectIndex = i;
+			_battleGUI.UpdateStats(i);
+		}
+		else{}
 	}
-	//
+	//Set the indicator based on game obejct
 	public void SetIndicator(GameObject x)
 	{
 		for (int i = 0; i < 4; i++) 
 		{
 			if(x.name == _partyStats[i]._id)
 			{
+				//Make sure the contract you selected has not already taken its turn.
 				if(!_userActions[i]._finished)
 				{
 					_indicator.renderer.material.mainTexture = _blueArrow;
@@ -194,6 +207,7 @@ public class BattleSystem : MonoBehaviour
 			else{}
 		}
 	}
+	//Set the indicator image, then set it to either the enemy or contract based on array index.
 	public void SetTarget(int x, string type)
 	{
 		if (type == "enemy") 
@@ -204,6 +218,7 @@ public class BattleSystem : MonoBehaviour
 		} 
 		else if (type == "contract") 
 		{
+			//Make sure it does not target the current contract your on
 			if(x != _selectIndex)
 			{
 				_indicator.renderer.material.mainTexture = _redArrow;
@@ -212,6 +227,7 @@ public class BattleSystem : MonoBehaviour
 			}
 			else
 			{
+				//If it is targeting the current contract your on, move it to another.
 				if((x+1) <= _amountOfContracts)
 				{
 					x++;
@@ -226,7 +242,7 @@ public class BattleSystem : MonoBehaviour
 			}
 		}
 	}
-	//
+	//Set target based on game object
 	public void SetTarget(GameObject x, string type)
 	{
 		if (type == "enemy") 
@@ -245,6 +261,7 @@ public class BattleSystem : MonoBehaviour
 		{
 			for(int i = 0; i < _partyStats.Length; i++)
 			{
+				//Make sure they cannot select the current contract they are on.
 				if((x.name == _partyStats[i]._id) && (i != _selectIndex))
 				{
 					_targetIndex = i;
@@ -254,11 +271,12 @@ public class BattleSystem : MonoBehaviour
 			}
 		}
 	}
-	//
+	//End the current contracts turn, if  it is the last contract that finishes, start the attacking sequence.
 	public void EndTurn ()
 	{
 		_turn++;
 		_targetIndex = 0;
+		//If it is your last turn, start attacking sequence.
 		if (_turn == _amountOfContracts) 
 		{
 			_attacking = true;
@@ -279,35 +297,42 @@ public class BattleSystem : MonoBehaviour
 			}
 		}
 	}
-	//
+	//Attacking sequence
 	public IEnumerator Orders()
 	{
+		//Target of attack/heal
 		Stats target;
+		//Targets of group attack/heal
 		Stats[] targets = _enemyStats;
+		//current contract
 		Stats user;
 		for(int i = 0; i < _amountOfContracts; i++)
 		{
+			//Based on contracts action type
 			switch(_userActions[i]._type)
 			{
+				//Attack the target with and attack, check to see if the target has fallen.
 				case "attack":
 					target = getEnemyStats(_userActions[i]._target);
-					user = getPlayerStats(_userActions[i]._user);
-					_battleGUI.setBattleText(user._name+" attacked "+target._name+" for "+target.TakeDamage(user)+" damage");
+					user = getContractStats(_userActions[i]._user);
+					_battleGUI.setBattleText(user._name+" attacked "+target._name+" for "+target.TakeDamage(user)+" damage.");
 					yield return new WaitForSeconds(2f);
 					if(target._currentHealth <= 0)
 					{
 						target.Feint();
-						_battleGUI.setBattleText(target._name+" has fallen.");
+						_battleGUI.AppendBattleText(". "+target._name+" has fallen.");
 					}
 					break;
+				//Defend the target
 				case "defend":
-					target = getPlayerStats(_userActions[i]._target);
-					user = getPlayerStats(_userActions[i]._user);
+					target = getContractStats(_userActions[i]._target);
+					user = getContractStats(_userActions[i]._user);
 					target.Shielded(user);
-					_battleGUI.setBattleText(user._name+" defended "+target._name);
+					_battleGUI.setBattleText(user._name+" defended "+target._name+".");
 					break;
+				//Set the user and target based on if the special is group or single attack/heal.
 				case "special":
-					user = getPlayerStats(_userActions[i]._user);
+					user = getContractStats(_userActions[i]._user);
 					if(!user._spAttack._name.Contains("group"))
 					{
 						if(!user._spAttack._name.Contains("heal"))
@@ -316,7 +341,7 @@ public class BattleSystem : MonoBehaviour
 						}
 						else
 						{
-							targets[0] = getPlayerStats(_userActions[i]._target);
+							targets[0] = getContractStats(_userActions[i]._target);
 						}
 					}
 					else
@@ -336,7 +361,7 @@ public class BattleSystem : MonoBehaviour
 						if(targets[x]._currentHealth <= 0)
 						{
 							targets[x].Feint();
-							_battleGUI.setBattleText(". "+targets[x]._name+" has fallen.");
+							_battleGUI.AppendBattleText(targets[x]._name+" has fallen.");
 							yield return new WaitForSeconds(2f);
 						}
 					}
@@ -403,7 +428,7 @@ public class BattleSystem : MonoBehaviour
 		_indicator.SetActive (true);
 		SetIndicator (_contracts [0]);
 	}
-	//
+	//Get the enemy stats based on game object
 	public Stats getEnemyStats(GameObject x)
 	{
 		Stats temp = null;
@@ -417,8 +442,8 @@ public class BattleSystem : MonoBehaviour
 		}
 		return temp;
 	}
-	//
-	public Stats getPlayerStats(GameObject x)
+	//Get contract stats based on game object
+	public Stats getContractStats(GameObject x)
 	{
 		Stats temp = null;
 		for(int i = 0; i < 4; i++)
@@ -431,7 +456,7 @@ public class BattleSystem : MonoBehaviour
 		}
 		return temp;
 	}
-	//
+	//Get a random string to use as an enemy ID
 	public string GetID(int x)
 	{
 		System.Random _ran = new System.Random (x);
@@ -444,7 +469,7 @@ public class BattleSystem : MonoBehaviour
 		}
 		return _return;
 	}
-	//
+	//Check to see if all the enemys are dead.
 	public bool EnemysAllDead()
 	{
 		int cont = 0;
@@ -461,7 +486,7 @@ public class BattleSystem : MonoBehaviour
 		}
 		return (cont==_amountOfEnemys)?true:false;
 	}
-	//
+	//Check to see if all your contracts are dead.
 	public bool ContractsAllDead()
 	{
 		int cont = 0;
@@ -478,7 +503,7 @@ public class BattleSystem : MonoBehaviour
 		}
 		return (cont==_amountOfContracts)?true:false;
 	}
-	//
+	//End the battle, load main meneu.
 	public void EndBattle()
 	{
 		_stopUpdate = false;

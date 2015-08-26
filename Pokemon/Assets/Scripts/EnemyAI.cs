@@ -35,6 +35,7 @@ public class EnemyAI : MonoBehaviour
 		else if (_mage) 
 		{
 			FindTarget ("LowestResistance");
+			text = _user._name+" attacked "+_target._name+" for "+_target.TakeDamage(_user)+" damage.";
 		} 
 		else if (_defender) 
 		{
@@ -47,6 +48,7 @@ public class EnemyAI : MonoBehaviour
 		else if (_thief) 
 		{
 			FindTarget ("LowestHealth");
+			text = _user._name+" attacked "+_target._name+" for "+_target.TakeDamage(_user)+" damage.";
 		} 
 		else 
 		{
@@ -73,6 +75,18 @@ public class EnemyAI : MonoBehaviour
 							break;
 						}
 						else{}
+					}
+				}
+				if(!found)
+				{
+					for(int i = 0; i < 4; i++)
+					{
+						if(BattleSystem._battleSystem._partyStats[i]._name != "Placeholder")
+						{
+							_target = BattleSystem._battleSystem._partyStats[i];
+							found = true;
+							break;
+						}
 					}
 				}
 				break;
