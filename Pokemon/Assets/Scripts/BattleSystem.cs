@@ -317,6 +317,7 @@ public class BattleSystem : MonoBehaviour
 					user = getContractStats(_userActions[i]._user);
 					_battleGUI.setBattleText(user._name+" attacked "+target._name+" for "+target.TakeDamage(user)+" damage.");
 					yield return new WaitForSeconds(2f);
+					//Check to see if the target has fallen.
 					if(target._currentHealth <= 0)
 					{
 						target.Feint();
@@ -356,6 +357,7 @@ public class BattleSystem : MonoBehaviour
 					}
 					_battleGUI.setBattleText(user.UseSpecial(targets));
 					yield return new WaitForSeconds(2f);
+					//Check to see if any of the enemies have fallen.
 					for(int x = 0; x < targets.Length; x++)
 					{
 						if(targets[x]._currentHealth <= 0)
@@ -369,11 +371,13 @@ public class BattleSystem : MonoBehaviour
 				default:
 					break;
 			}
+			//If all the enemys are dead break out of the loop, no need for the other contracts to attack.
 			if(EnemysAllDead())
 			{
 				break;
 			}
 		}
+		//If there are enemies left, start their attack sequence.
 		if (!EnemysAllDead ()) 
 		{
 			_battleGUI.setBattleText ("Enemy turn.");
@@ -384,6 +388,7 @@ public class BattleSystem : MonoBehaviour
 				{
 					_battleGUI.setBattleText (_enemyAI [i].State ());
 					yield return new WaitForSeconds (2f);
+					//If all the contracts are dead, break out of the loop. No need to keep attacking.
 					if(ContractsAllDead())
 					{
 						break;
@@ -395,6 +400,7 @@ public class BattleSystem : MonoBehaviour
 			_battleGUI.setBattleText ("Your turn.");
 			yield return null;
 		} 
+		//If all the enemies are dead, we start the winning process
 		else 
 		{
 			_attacking = false;
@@ -404,6 +410,7 @@ public class BattleSystem : MonoBehaviour
 			_indicator.gameObject.SetActive(false);
 			StopCoroutine(Orders());
 		}
+		//If all the contracts are dead, we start the loseing process.
 		if (ContractsAllDead ()) 
 		{
 			_battleGUI.setBattleText("All your contracts have fallen in battle, you have lost.");
@@ -411,6 +418,12 @@ public class BattleSystem : MonoBehaviour
 			_indicator.gameObject.SetActive(false);
 			StopCoroutine(Orders());
 		}
+		/*
+		 * Reset the for the next round of attack, 
+		 * if the contract was defended we reset its defence stats,
+		 * if the contract has a special attack on cooldown, up its current time,
+		 * reset the actions
+		*/
 		for (int i = 0; i < _userActions.Length; i++) 
 		{
 			_partyStats[i]._defended = false;
@@ -425,6 +438,7 @@ public class BattleSystem : MonoBehaviour
 			}
 			_userActions [i] = new Action ();
 		}
+		//Set the indicator back to the first contract.
 		_indicator.SetActive (true);
 		SetIndicator (_contracts [0]);
 	}

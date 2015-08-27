@@ -59,9 +59,10 @@ public class ControlSystem : MonoBehaviour
 	public System.Timers.Timer _timeOutTimer;
 	//
 	private Thread _searchThread;
-	//
+	//Singleton
 	void Awake()
 	{
+		//Only happens once, sets the timers and load player data.
 		if(_control == null)
 		{
 			DontDestroyOnLoad(gameObject);
@@ -88,11 +89,7 @@ public class ControlSystem : MonoBehaviour
 		}
 	}
 	// Use this for initialization
-	void Start () 
-	{
-	
-	}
-	
+	void Start () {}
 	// Update is called once per frame
 	void Update () 
 	{
@@ -100,6 +97,7 @@ public class ControlSystem : MonoBehaviour
 		{
 			EnterBattle();
 		}
+		//If the player does not accept the battle request in time, need to do this in the main thread.
 		if (_timeOut) 
 		{
 			_timeOut = false;
@@ -111,17 +109,17 @@ public class ControlSystem : MonoBehaviour
 			_timer.Start();
 		}
 	}
-	//
+	//Get for if they are in battle
 	public bool getInbattle()
 	{
 		return _inBattle;
 	}
-	//
+	//Set for if they are in battle
 	public void setInBattle(bool x)
 	{
 		_inBattle = x;
 	}
-	//
+	//Serialize the player data, setPlayerData will set the data.
 	public void Save()
 	{
 		BinaryFormatter bf = new BinaryFormatter();
@@ -131,7 +129,11 @@ public class ControlSystem : MonoBehaviour
 		bf.Serialize (file, player);
 		file.Close ();
 	}
-	//
+	/*
+	 * Load the player data from a serialization file, 
+	 * if there is none then the player is new and they must create a character,
+	 * setPlayer will set the data for the player.
+	*/
 	public void Load()
 	{
 		_player = _playerObject.GetComponent<Player> ();
@@ -152,10 +154,14 @@ public class ControlSystem : MonoBehaviour
 			_camera.AddComponent<NewUserGUI>();
 		}
 	}
-	//
+	/*
+	 * Starts a thread for finding a battle, 
+	 * instantiates the inventory so the player may look at their contracts, 
+	 * set the stage based on time of day.
+	*/
 	public void StartGame()
 	{
-		_searchThread = new Thread(() => SearchForPlayer());
+		//_searchThread = new Thread(() => SearchForPlayer());
 		StartCoroutine(SearchForBattle());
 		//
 		Instantiate (Resources.Load ("Inventory"));
@@ -164,7 +170,7 @@ public class ControlSystem : MonoBehaviour
 		//
 		SetStage();
 	}
-	//
+	//Creates a player.dat file for saving and loading, if there is already one we deleate the data the prev one.
 	public void CreateUser()
 	{
 		if (File.Exists (Application.persistentDataPath + "/player.dat")) 
@@ -178,7 +184,7 @@ public class ControlSystem : MonoBehaviour
 		}
 		Save ();
 	}
-	//
+	//Deleates the user Data, starts the new character process.
 	public void DeleateUserData()
 	{
 		File.Delete(Application.persistentDataPath + "/player.dat");
@@ -190,7 +196,7 @@ public class ControlSystem : MonoBehaviour
 		MainGUI._mainGUI._new = true;
 		_camera.AddComponent<NewUserGUI>();
 	}
-	//
+	//Start the timer to search for a battle
 	public IEnumerator SearchForBattle()
 	{
 		_timer.Start ();
@@ -218,7 +224,7 @@ public class ControlSystem : MonoBehaviour
 		}
 		return;
 	}
-	//
+	//Enter a NPC battle, load a level based on GPS location
 	public void EnterBattle()
 	{
 		//
@@ -229,8 +235,10 @@ public class ControlSystem : MonoBehaviour
 		//
 		_timeOutTimer.Stop ();
 		_timer.Stop ();
-		//
+		//GPS code-----------------------------
 		Application.LoadLevel (3);
+		//------------------------------------
+		//Make sure they can't deleate there data while in a battle
 		MainGUI._mainGUI._deleateData.gameObject.SetActive (false);
 	}
 	//
