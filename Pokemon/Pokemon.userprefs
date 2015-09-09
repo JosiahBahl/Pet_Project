@@ -1,12 +1,8 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ControlSystem.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\AnimationControl.cs">
     <Files>
-      <File FileName="Assets\Scripts\Contract.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ControlSystem.cs" Line="241" Column="62" />
-      <File FileName="Assets\Scripts\EnemyAI.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Stats.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\MainGUI.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\AnimationControl.cs" Line="6" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
