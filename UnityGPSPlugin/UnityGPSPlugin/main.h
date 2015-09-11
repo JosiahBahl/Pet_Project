@@ -2,11 +2,15 @@
 #define MAIN_H
 
 #include <QtLocation>
+#include <QtPositioning>
 
-class Main
+class Main : QObject
 {
+    Q_OBJECT
 public:
-    Main();
+    Main(QObject *parent = 0): QObject(parent){}
+private slots:
+    void positionUpdated(const QGeoPositionInfo &info){}
 };
 
 #endif // MAIN_H
