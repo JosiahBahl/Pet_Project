@@ -2,10 +2,10 @@
 #define MAIN_H
 
 #include <QtLocation>
+#include <QtPositioning>
 
 class Main
 {
-public:
     Main();
 };
 
