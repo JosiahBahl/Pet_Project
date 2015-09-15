@@ -26,7 +26,6 @@ public class PlayerControl : MonoBehaviour
 		if(_vertAxis > 0)
 		{
 			transform.Translate(0,0,(_vertAxis*_translationSpeed)*Time.deltaTime);
-			_cameraControl.Recenter();
 		}
 		else if(_vertAxis < 0)
 		{
@@ -37,7 +36,6 @@ public class PlayerControl : MonoBehaviour
 		if(_horiAxis != 0)
 		{
 			transform.Rotate(0,(_horiAxis*(_rotationSpeed)*Time.deltaTime),0);
-			_cameraControl.Recenter();
 		}
 		else{}
 		//States
