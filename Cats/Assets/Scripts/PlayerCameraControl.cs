@@ -8,20 +8,36 @@ public class PlayerCameraControl : MonoBehaviour
 	//
 	public Transform _player;
 	//
-	public Vector3 _offsetPosition;
+	public Vector3 _offset;
 	//
-	private Vector3 _lookTarget;
+	private float x = 0f;
+	private float y = 0f;
 	// Use this for initialization
 	private void Start () 
 	{
-		transform.position = _player.position+_offsetPosition;
 	}
 	
 	// Update is called once per frame
 	private void FixedUpdate () 
 	{
+		if (!DataControl.Controller) 
+		{
+			x += Input.GetAxis ("Mouse X") * _rotationSpeed;
+			y += Input.GetAxis ("Mouse Y") * _rotationSpeed;
+		} 
+		else 
+		{
+			x += Input.GetAxis ("JoystickMouseX") * _rotationSpeed;
+			y += Input.GetAxis ("JoystickMouseY") * _rotationSpeed;
+			print (Input.GetAxis ("JoystickMouseX"));
+		}
+		
+		//y = ClampAngle(y, yMinLimit, yMaxLimit);
+		Quaternion rotation = Quaternion.Euler(y, x, 0f);
+		transform.rotation = rotation;
+		Vector3 position = rotation * new Vector3(0f, 3, -3) + _player.position;
+
+		transform.position = position;
 		transform.LookAt(_player.position);
-		transform.RotateAround(_player.position, Vector3.up, Input.GetAxis("Mouse X"));
-		transform.RotateAround(_player.position, Vector3.right, Input.GetAxis("Mouse Y"));
 	}
 }
