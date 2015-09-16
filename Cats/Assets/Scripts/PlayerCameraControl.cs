@@ -10,6 +10,8 @@ public class PlayerCameraControl : MonoBehaviour
 	//
 	public Vector3 _offset;
 	//
+	public Vector2 _minMax;
+	//
 	private float x = 0f;
 	private float y = 0f;
 	// Use this for initialization
@@ -24,12 +26,13 @@ public class PlayerCameraControl : MonoBehaviour
 		{
 			x += Input.GetAxis ("Mouse X") * _rotationSpeed;
 			y += Input.GetAxis ("Mouse Y") * _rotationSpeed;
+			y = Mathf.Clamp(y, _minMax.x, _minMax.y);
 		} 
 		else 
 		{
 			x += Input.GetAxis ("JoystickMouseX") * _rotationSpeed;
 			y += Input.GetAxis ("JoystickMouseY") * _rotationSpeed;
-			print (Input.GetAxis ("JoystickMouseX"));
+			y = Mathf.Clamp(y, _minMax.x, _minMax.y);
 		}
 		
 		//y = ClampAngle(y, yMinLimit, yMaxLimit);

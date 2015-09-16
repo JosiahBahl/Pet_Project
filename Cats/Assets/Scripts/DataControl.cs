@@ -4,7 +4,7 @@ using System.Collections;
 public class DataControl : MonoBehaviour 
 {
 	//
-	public static bool Controller = true;
+	public static bool Controller = false;
 	// Use this for initialization
 	void Start () 
 	{
