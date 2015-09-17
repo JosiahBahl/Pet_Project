@@ -13,6 +13,8 @@ public class PlayerControl : MonoBehaviour
 	public float _jumpHeight = 10f;
 	//
 	public bool _jumping = false;
+	//
+	private RaycastHit _hit;
 	// Use this for initialization
 	void Start () 
 	{
@@ -45,7 +47,8 @@ public class PlayerControl : MonoBehaviour
 		//
 		if(_jumpAxis > 0 && !_jumping)
 		{
-			transform.rigidbody.AddForce(new Vector3(0,_jumpHeight*_jumpSpeed,0));
+			rigidbody.velocity = Vector3.zero;
+			rigidbody.AddForce(new Vector3(0,_jumpHeight*_jumpSpeed,0));
 			_jumping = true;
 		}
 		//States
@@ -57,10 +60,18 @@ public class PlayerControl : MonoBehaviour
 		{
 			PlayerState.SetStopped (false);
 		}
+		//Debug.DrawLine(transform.position, new Vector3(0,-.3f,0), Color.red, Time.deltaTime);
 		//
-		if(_jumping)
+		if(_jumping && rigidbody.velocity.y < 0)
 		{
-
+			if(Physics.Raycast(transform.position, Vector3.down, out _hit, .7f))
+		   	{
+				if(_hit.collider.tag == "ground")
+				{
+					rigidbody.velocity = Vector3.zero;
+					_jumping = false;
+				}
+			}
 		}
 	}
 }
