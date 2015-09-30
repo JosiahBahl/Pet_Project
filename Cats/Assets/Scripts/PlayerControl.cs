@@ -47,8 +47,8 @@ public class PlayerControl : MonoBehaviour
 		//
 		if(_jumpAxis > 0 && !_jumping)
 		{
-			rigidbody.velocity = Vector3.zero;
-			rigidbody.AddForce(new Vector3(0,_jumpHeight*_jumpSpeed,0));
+			GetComponent<Rigidbody>().velocity = Vector3.zero;
+			GetComponent<Rigidbody>().AddForce(new Vector3(0,_jumpHeight*_jumpSpeed,0));
 			_jumping = true;
 		}
 		//States
@@ -62,13 +62,13 @@ public class PlayerControl : MonoBehaviour
 		}
 		//Debug.DrawLine(transform.position, new Vector3(0,-.3f,0), Color.red, Time.deltaTime);
 		//
-		if(_jumping && rigidbody.velocity.y < 0)
+		if(_jumping && GetComponent<Rigidbody>().velocity.y < 0)
 		{
 			if(Physics.Raycast(transform.position, Vector3.down, out _hit, .7f))
 		   	{
 				if(_hit.collider.tag == "ground")
 				{
-					rigidbody.velocity = Vector3.zero;
+					GetComponent<Rigidbody>().velocity = Vector3.zero;
 					_jumping = false;
 				}
 			}
