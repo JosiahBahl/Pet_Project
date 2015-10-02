@@ -1,19 +1,26 @@
 #include <iostream>
 #include <parser.h>
 #include <thread>
-#include <array>
-#include <action.h>
+#include <map>
 
 using namespace std;
 
-std::array<Action::Action, 5> _actions;
+typedef std::string (*Action)();
+
+std::map<std::string, Action> _functions;
+
+std::string Look()
+{
+    return "I have looked";
+}
+
 void ProcessComands()
 {
     bool end = false;
 
     std::string command;
 
-    std::array<std::string, 2> commands;
+    std::array<std::string, 2> commands = {""};
 
     Parser parser;
 
@@ -21,20 +28,52 @@ void ProcessComands()
     {
        std::cout<<"Enter command"<<std::endl;
        std::getline(std::cin,command);
-       if(command == "Exit")
+       if(command == "exit")
        {
            end = true;
        }
        else
        {
+           commands[0] = "";
+           commands[1] = "";
+           //
            commands = parser.SplitCommand(command);
-           std::cout<<commands[0]+" | "+commands[1]<<std::endl;
+           if(commands[0] != "")
+           {
+               if(commands[1] != "")
+               {
+                    std::map<std::string, std::string(*)()>::iterator search= _functions.find(commands[0]);
+                    if(search != _functions.end())
+                    {
+                        Action x = search->second;
+                       std::cout<<(*x)()<<std::endl;
+                    }
+                    else
+                    {
+
+                    }
+               }
+               else
+               {
+                    std::cout<<commands[0]+" to what?"<<std::endl;
+               }
+            }
+            else
+            {
+               std::cout<<"You did not enter a command."<<std::endl;
+            }
        }
     }
 }
 
+void CreateWorld()
+{
+    _functions["look"] = Look;
+}
+
 int main()
 {
+    CreateWorld();
     std::thread t (ProcessComands);
     t.join();
     return 0;
