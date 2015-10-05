@@ -3,44 +3,24 @@ using System.Collections;
 
 public class PlayerCameraControl : MonoBehaviour 
 {
-	//
-	public float _rotationSpeed = 2f;
-	//
-	public Transform _player;
-	//
-	public Vector3 _offset;
-	//
-	public Vector2 _minMax;
-	//
-	private float x = 0f;
-	private float y = 0f;
-	// Use this for initialization
-	private void Start () 
-	{
-	}
-	
-	// Update is called once per frame
-	private void FixedUpdate () 
-	{
-		if (!DataControl.Controller) 
+    public static GameObject LookingAt;
+    //
+    private RaycastHit _hit;
+    //
+    public float _range = 2f;
+    //
+    private void FixedUpdate ()
+    {
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * _range;
+        Debug.DrawRay(transform.position, forward, Color.red);
+        if(Physics.Raycast(transform.position, forward, out _hit, _range))
 		{
-			x += Input.GetAxis ("Mouse X") * _rotationSpeed;
-			y += Input.GetAxis ("Mouse Y") * _rotationSpeed;
-			y = Mathf.Clamp(y, _minMax.x, _minMax.y);
-		} 
-		else 
-		{
-			x += Input.GetAxis ("JoystickMouseX") * _rotationSpeed;
-			y += Input.GetAxis ("JoystickMouseY") * _rotationSpeed;
-			y = Mathf.Clamp(y, _minMax.x, _minMax.y);
+            Interactive temp = _hit.transform.GetComponent<Interactive>();
+            LookingAt = _hit.collider.gameObject;
+            if(temp != null)
+            {
+                temp.ShowPopup();
+            }
 		}
-		
-		//y = ClampAngle(y, yMinLimit, yMaxLimit);
-		Quaternion rotation = Quaternion.Euler(y, x, 0f);
-		transform.rotation = rotation;
-		Vector3 position = rotation * new Vector3(0f, 3, -3) + _player.position;
-
-		transform.position = position;
-		transform.LookAt(_player.position);
-	}
+    }
 }
