@@ -4,8 +4,12 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    parser.cpp
+    parser.cpp \
+    room.cpp \
+    wolrdmap.cpp
 
 HEADERS += \
-    parser.h
+    parser.h \
+    room.h \
+    wolrdmap.h
 

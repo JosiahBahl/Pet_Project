@@ -43,6 +43,7 @@ void ProcessComands()
                if(commands[1] != "")
                {
                     std::map<std::string, std::string(*)()>::iterator search= _functions.find(commands[0]);
+                    std::cout<<commands[0]+" : "+commands[1]<<std::endl;
                     if(search != _functions.end())
                     {
                         Action x = search->second;
