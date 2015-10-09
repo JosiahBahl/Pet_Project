@@ -1,17 +1,74 @@
 #include <iostream>
 #include <parser.h>
+#include <worldmap.h>
 #include <thread>
 #include <map>
 
 using namespace std;
-
-typedef std::string (*Action)();
-
+//
+typedef std::string (*Action)(std::string x);
+//
 std::map<std::string, Action> _functions;
-
-std::string Look()
+//
+WorldMap _map = WorldMap();
+//
+std::string Look(std::string target)
 {
-    return "I have looked";
+    return _map.GetCurrentRoom().getLongDesc();
+}
+
+std::string GoTo(std::string direction)
+{
+    std::string returnString = "The room does not have an exit that way";
+    if(direction == "north")
+    {
+        if(_map.GetCurrentRoom().hasExit('n'))
+        {
+            _map.GoToRoom(_map._row+1, _map._colum);
+            returnString = _map.GetCurrentRoom().getDesc();
+        }
+        else
+        {
+        }
+    }
+    else if (direction == "east")
+    {
+        if(_map.GetCurrentRoom().hasExit('e'))
+        {
+            _map.GoToRoom(_map._row, _map._colum+1);
+            returnString = _map.GetCurrentRoom().getDesc();
+        }
+        else
+        {
+        }
+    }
+    else if (direction == "south")
+    {
+        if(_map.GetCurrentRoom().hasExit('s'))
+        {
+            _map.GoToRoom(_map._row-1, _map._colum);
+            returnString = _map.GetCurrentRoom().getDesc();
+        }
+        else
+        {
+        }
+    }
+    else if (direction == "west")
+    {
+        if(_map.GetCurrentRoom().hasExit('w'))
+        {
+            _map.GoToRoom(_map._row, _map._colum-1);
+            returnString = _map.GetCurrentRoom().getDesc();
+        }
+        else
+        {
+        }
+    }
+    else
+    {
+        returnString = direction+" is not a proper direction";
+    }
+    return returnString;
 }
 
 void ProcessComands()
@@ -42,12 +99,11 @@ void ProcessComands()
            {
                if(commands[1] != "")
                {
-                    std::map<std::string, std::string(*)()>::iterator search= _functions.find(commands[0]);
-                    std::cout<<commands[0]+" : "+commands[1]<<std::endl;
+                    std::map<std::string, std::string(*)(std::string x)>::iterator search = _functions.find(commands[0]);
                     if(search != _functions.end())
                     {
                         Action x = search->second;
-                       std::cout<<(*x)()<<std::endl;
+                       std::cout<<(*x)(commands[1])<<std::endl;
                     }
                     else
                     {
@@ -70,6 +126,8 @@ void ProcessComands()
 void CreateWorld()
 {
     _functions["look"] = Look;
+    _functions["go"] = GoTo;
+    _map.CreateMap();
 }
 
 int main()

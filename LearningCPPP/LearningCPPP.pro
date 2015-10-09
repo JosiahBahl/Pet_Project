@@ -6,10 +6,18 @@ CONFIG -= qt
 SOURCES += main.cpp \
     parser.cpp \
     room.cpp \
-    wolrdmap.cpp
+    worldmap.cpp \
+    item.cpp \
+    weapon.cpp \
+    player.cpp \
+    inventory.cpp
 
 HEADERS += \
     parser.h \
     room.h \
-    wolrdmap.h
+    worldmap.h \
+    item.h \
+    weapon.h \
+    player.h \
+    inventory.h
 

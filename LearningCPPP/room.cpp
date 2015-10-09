@@ -13,6 +13,14 @@ Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<
     _exits = exits;
 }
 
+Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits)
+{
+    _roomName = name;
+    _roomDesc = desc;
+    _longDesc = lDesc;
+    _exits = exits;
+}
+
 std::string Room::getName()
 {
     return _roomName;
