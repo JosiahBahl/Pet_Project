@@ -21,6 +21,8 @@ public class PlayerControl : MonoBehaviour
 	public bool _jumping = false;
 	//
 	private RaycastHit _hit;
+    //
+    public PlayerCameraControl _cameraScript;
 	// Use this for initialization
 	void Start () 
 	{
@@ -28,8 +30,8 @@ public class PlayerControl : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	private void FixedUpdate () 
-	{
+    private void FixedUpdate()
+    {
         //Camera Control
         if (!DataControl.Controller)
         {
@@ -46,52 +48,73 @@ public class PlayerControl : MonoBehaviour
         _cameraRotation.localEulerAngles = new Vector3(y, _cameraRotation.rotation.y, 0f);
         transform.Rotate(0, x, 0);
         //-----------------------------------------------------------------------------------
-		//Player Control
-		_vertAxis = Input.GetAxis("Vertical");
-		_horiAxis = Input.GetAxis("Horizontal");
-		_jumpAxis = Input.GetAxis("Jump");
-		//
-		if(_vertAxis > 0)
-		{
-			transform.Translate(0,0,(_vertAxis*_translationSpeed)*Time.deltaTime);
-		}
-		else if(_vertAxis < 0)
-		{
-			transform.Translate(0,0,(_vertAxis)*Time.deltaTime);
-		}
-		else{}
-		//
-		if(_horiAxis != 0)
-		{
+        //Player Control
+        _vertAxis = Input.GetAxis("Vertical");
+        _horiAxis = Input.GetAxis("Horizontal");
+        _jumpAxis = Input.GetAxis("Jump");
+        //
+        if (_vertAxis > 0)
+        {
+            transform.Translate(0, 0, (_vertAxis * _translationSpeed) * Time.deltaTime);
+        }
+        else if (_vertAxis < 0)
+        {
+            transform.Translate(0, 0, (_vertAxis) * Time.deltaTime);
+        }
+        else { }
+        //
+        if (_horiAxis != 0)
+        {
             transform.Translate((_horiAxis * _translationSpeed) * Time.deltaTime, 0, 0);
-		}
-		else{}
-		//
-		if(_jumpAxis > 0 && !_jumping)
-		{
-			GetComponent<Rigidbody>().velocity = Vector3.zero;
-			GetComponent<Rigidbody>().AddForce(new Vector3(0,_jumpHeight*_jumpSpeed,0));
-			_jumping = true;
-		}
-		//States
-		if (_vertAxis == 0 && _horiAxis == 0) 
-		{
-			PlayerState.SetStopped (true);
-		} 
-		else 
-		{
-			PlayerState.SetStopped (false);
-		}
-		//Debug.DrawLine(transform.position, new Vector3(0,-.3f,0), Color.red, Time.deltaTime);
-		//
-		if(_jumping && GetComponent<Rigidbody>().velocity.y < 0)
-		{
-			if(Physics.Raycast(transform.position, Vector3.down, out _hit, .7f))
-		   	{
-				GetComponent<Rigidbody>().velocity = Vector3.zero;
-				_jumping = false;
-			}
-		}
+        }
+        else { }
+        //
+        if (_jumpAxis > 0 && !_jumping)
+        {
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GetComponent<Rigidbody>().AddForce(new Vector3(0, _jumpHeight * _jumpSpeed, 0));
+            _jumping = true;
+        }
+        //States
+        if (_vertAxis == 0 && _horiAxis == 0)
+        {
+            PlayerState.SetStopped(true);
+        }
+        else
+        {
+            PlayerState.SetStopped(false);
+        }
+        //Debug.DrawLine(transform.position, new Vector3(0,-.3f,0), Color.red, Time.deltaTime);
+        //
+        if (_jumping && GetComponent<Rigidbody>().velocity.y < 0)
+        {
+            if (Physics.Raycast(transform.position, Vector3.down, out _hit, .7f))
+            {
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                _jumping = false;
+            }
+        }
         //-----------------------------------------------------------------------------------
-	}
+    }
+    //
+    private void OnTriggerEnter(Collider x)
+    {
+        InteractiveTrigger temp = x.gameObject.GetComponent<InteractiveTrigger>();
+        if (temp != null)
+        {
+            _cameraScript.AddInteraction(temp._interactiveObject, temp._interactiveObject.GetComponent<Interactive>());
+        }
+    }
+    //
+    private void OnTriggerExit(Collider x)
+    {
+         InteractiveTrigger temp = x.gameObject.GetComponent<InteractiveTrigger>();
+         if (temp != null)
+         {
+             if (PlayerCameraControl.ObjectsIn.Contains(temp._interactiveObject))
+             {
+                 _cameraScript.RemoveInteraction(temp._interactiveObject);
+             }
+         }
+    }
 }

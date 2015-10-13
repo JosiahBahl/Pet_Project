@@ -1,26 +1,79 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerCameraControl : MonoBehaviour 
 {
-    public static GameObject LookingAt;
+    //
+    public static List<GameObject> ObjectsIn = new List<GameObject>();
     //
     private RaycastHit _hit;
     //
     public float _range = 2f;
     //
+    public static List<Interactive> Interactions = new List<Interactive>();
+    //
+    public bool _canInteract = false;
+    //
+    public static int Index = -1;
+    //
+    private void Update()
+    {
+        if (Input.GetKeyDown("p"))
+        {
+            for (int i = 0; i < ObjectsIn.Count; i++)
+            {
+                Debug.Log(ObjectsIn[i]);
+                Debug.Log(Interactions[i]);
+            }
+        }
+    }
+    //
     private void FixedUpdate ()
     {
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * _range;
-        Debug.DrawRay(transform.position, forward, Color.red);
-        if(Physics.Raycast(transform.position, forward, out _hit, _range))
-		{
-            Interactive temp = _hit.transform.GetComponent<Interactive>();
-            LookingAt = _hit.collider.gameObject;
-            if(temp != null)
+        if (_canInteract)
+        {
+            Vector3 forward = transform.TransformDirection(Vector3.forward) * _range;
+            Debug.DrawRay(transform.position, forward, Color.red);
+            if (Physics.Raycast(transform.position, forward, out _hit, _range))
             {
-                temp.ShowPopup();
+                if (ObjectsIn.Contains(_hit.collider.gameObject))
+                {
+                    PlayerCameraControl.Index = ObjectsIn.IndexOf(_hit.collider.gameObject);
+                    Interactions[PlayerCameraControl.Index].ShowPopup();
+                }
+                else
+                {
+                    PlayerCameraControl.Index = -1;
+                }
             }
-		}
+            else
+            {
+                PlayerCameraControl.Index = -1;
+            }
+        }
+    }
+    //
+    public void AddInteraction(GameObject x, Interactive y)
+    {
+        if (!ObjectsIn.Contains(x))
+        {
+            Interactions.Add(y);
+            y._index = Interactions.Count - 1;
+            ObjectsIn.Add(x);
+            _canInteract = true;
+        }
+    }
+    //
+    public void RemoveInteraction(GameObject x)
+    {
+        int i = ObjectsIn.IndexOf(x);
+        ObjectsIn.RemoveAt(i);
+        Interactions[i]._index = 0;
+        Interactions.RemoveAt(i);
+        if (ObjectsIn.Count == 0)
+        {
+            _canInteract = false;
+        }
     }
 }
