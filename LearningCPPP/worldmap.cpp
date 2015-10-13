@@ -1,4 +1,6 @@
 #include "worldmap.h"
+#include <item.h>
+#include <weapon.cpp>
 
 WorldMap::WorldMap()
 {
@@ -8,14 +10,10 @@ WorldMap::WorldMap()
 void WorldMap::CreateMap()
 {
     std::array<char, 4> exits = {'n','0','0','0'};
+    Weapon broom(1, "Broom", "A shitty broom");
     _map[0][25] = Room("Entrance",
                        "An entrance way. You have an exit to the north",
                        "The walls are made out of thick stone, there is some mold on the walls",
-                       exits);
-    exits = {'n','w','s','e'};
-    _map[1][25] = Room("Foyer",
-                       "A larga foyer there is a chandalier hanging fromt he ceiling and two staircases that lead to the upper level, you have exits to the north, east, south and west.",
-                       "There is a huge chandalier in the middle of the foyer, two grand stair cases lead to the upper level. There are doors to the left and right. Behind you is the entry way.",
                        exits);
     exits = {'n','w','s','e'};
     _map[1][25] = Room("Foyer",

@@ -4,6 +4,7 @@
 #define Scolum 25
 #include <room.h>
 #include <iostream>
+#include <weapon.h>
 
 class WorldMap
 {

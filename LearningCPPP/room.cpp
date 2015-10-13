@@ -13,12 +13,30 @@ Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<
     _exits = exits;
 }
 
+Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits, std::vector<Item*> item)
+{
+    _roomName = name;
+    _roomDesc = desc;
+    _longDesc = lDesc;
+    _exits = exits;
+    _items = item;
+}
+
 Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits)
 {
     _roomName = name;
     _roomDesc = desc;
     _longDesc = lDesc;
     _exits = exits;
+}
+
+Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits, std::vector<Item*> item)
+{
+    _roomName = name;
+    _roomDesc = desc;
+    _longDesc = lDesc;
+    _exits = exits;
+    _items = item;
 }
 
 std::string Room::getName()
@@ -75,3 +93,26 @@ bool Room::hasExit(char x)
     return temp;
 }
 
+Item* Room::getItem(std::string name)
+{
+    Item* temp;
+    for(int i = 0; i < _items.size(); i++)
+    {
+        if(_items[i]->GetName() == name)
+        {
+            temp = _items[i];
+        }
+    }
+    return temp;
+}
+
+std::vector<Item*> Room::getItems()
+{
+    return _items;
+}
+
+bool Room::hasItems()
+{
+    return (_items.size() > 0) ? true : false;
+
+}

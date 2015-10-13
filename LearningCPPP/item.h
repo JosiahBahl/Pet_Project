@@ -9,7 +9,7 @@ protected:
     std::string _desc;
 public:
     Item();
-    Item(std::string name, std::string desc);
+    Item(const std::string name, const std::string desc);
     virtual std::string Use() = 0;
     std::string GetName();
 };
