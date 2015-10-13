@@ -48,11 +48,13 @@
      <Compile Include="Assets\Scripts\DataControl.cs" />
      <Compile Include="Assets\Scripts\GUIControl.cs" />
      <Compile Include="Assets\Scripts\Interactive.cs" />
+     <Compile Include="Assets\Scripts\InteractiveTrigger.cs" />
      <Compile Include="Assets\Scripts\PlayerCameraControl.cs" />
      <Compile Include="Assets\Scripts\PlayerControl.cs" />
      <Compile Include="Assets\Scripts\PlayerState.cs" />
      <Compile Include="Assets\Scripts\SingletonSpawner.cs" />
      <Compile Include="Assets\Scripts\Test.cs" />
+     <Compile Include="Assets\Scripts\Usable.cs" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
