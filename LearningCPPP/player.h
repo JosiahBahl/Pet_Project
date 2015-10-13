@@ -3,7 +3,6 @@
 #include <inventory.h>
 #include <string>
 
-
 class Player
 {
 private:
@@ -15,7 +14,7 @@ private:
     bool _dead;
 public:
     Player();
-    std::string PrintInventory();
+    Inventory GetInventory();
 };
 
 #endif // PLAYER_H

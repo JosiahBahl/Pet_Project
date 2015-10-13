@@ -11,6 +11,7 @@ public:
     Item();
     Item(std::string name, std::string desc);
     virtual std::string Use() = 0;
+    std::string GetName();
 };
 
 #endif // ITEM_H
