@@ -19,6 +19,7 @@ public class PlayerControl : MonoBehaviour
     public Vector2 _minMaxY;
 	//
 	public bool _jumping = false;
+    public static bool Controling = false;
 	//
 	private RaycastHit _hit;
     //
@@ -53,36 +54,39 @@ public class PlayerControl : MonoBehaviour
         _horiAxis = Input.GetAxis("Horizontal");
         _jumpAxis = Input.GetAxis("Jump");
         //
-        if (_vertAxis > 0)
+        if (!Controling)
         {
-            transform.Translate(0, 0, (_vertAxis * _translationSpeed) * Time.deltaTime);
-        }
-        else if (_vertAxis < 0)
-        {
-            transform.Translate(0, 0, (_vertAxis) * Time.deltaTime);
-        }
-        else { }
-        //
-        if (_horiAxis != 0)
-        {
-            transform.Translate((_horiAxis * _translationSpeed) * Time.deltaTime, 0, 0);
-        }
-        else { }
-        //
-        if (_jumpAxis > 0 && !_jumping)
-        {
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
-            GetComponent<Rigidbody>().AddForce(new Vector3(0, _jumpHeight * _jumpSpeed, 0));
-            _jumping = true;
-        }
-        //States
-        if (_vertAxis == 0 && _horiAxis == 0)
-        {
-            PlayerState.SetStopped(true);
-        }
-        else
-        {
-            PlayerState.SetStopped(false);
+            if (_vertAxis > 0)
+            {
+                transform.Translate(0, 0, (_vertAxis * _translationSpeed) * Time.deltaTime);
+            }
+            else if (_vertAxis < 0)
+            {
+                transform.Translate(0, 0, (_vertAxis) * Time.deltaTime);
+            }
+            else { }
+            //
+            if (_horiAxis != 0)
+            {
+                transform.Translate((_horiAxis * _translationSpeed) * Time.deltaTime, 0, 0);
+            }
+            else { }
+            //
+            if (_jumpAxis > 0 && !_jumping)
+            {
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                GetComponent<Rigidbody>().AddForce(new Vector3(0, _jumpHeight * _jumpSpeed, 0));
+                _jumping = true;
+            }
+            //States
+            if (_vertAxis == 0 && _horiAxis == 0)
+            {
+                PlayerState.SetStopped(true);
+            }
+            else
+            {
+                PlayerState.SetStopped(false);
+            }
         }
         //Debug.DrawLine(transform.position, new Vector3(0,-.3f,0), Color.red, Time.deltaTime);
         //

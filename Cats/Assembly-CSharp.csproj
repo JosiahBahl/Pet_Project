@@ -52,6 +52,7 @@
      <Compile Include="Assets\Scripts\PlayerCameraControl.cs" />
      <Compile Include="Assets\Scripts\PlayerControl.cs" />
      <Compile Include="Assets\Scripts\PlayerState.cs" />
+     <Compile Include="Assets\Scripts\ShipControls.cs" />
      <Compile Include="Assets\Scripts\SingletonSpawner.cs" />
      <Compile Include="Assets\Scripts\Test.cs" />
      <Compile Include="Assets\Scripts\Usable.cs" />

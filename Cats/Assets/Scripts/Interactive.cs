@@ -11,6 +11,8 @@ public class Interactive : MonoBehaviour
     public Vector3 _position;
     //
     public Vector3 _rotation;
+    //
+    public Usable _useableScript;
 	// Use this for initialization
 	void Start () 
     {
@@ -20,13 +22,23 @@ public class Interactive : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if(PlayerCameraControl.Index != _index)
+        if(!_useableScript._inUse)
         {
-            HidePopup();
+            if(PlayerCameraControl.Index != _index)
+            {
+                HidePopup();
+            }
+            else
+            {
+                ShowPopup();
+            }
         }
         else
         {
-            ShowPopup();
+            if(Input.GetKeyDown("e"))
+            {
+
+            }
         }
 	}
 
