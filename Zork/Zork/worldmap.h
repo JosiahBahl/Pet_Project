@@ -12,14 +12,16 @@
 class WorldMap
 {
 private:
-    Room _map[Srow][Scolum];
-    Room _current;
+    Room * _map[Srow][Scolum];
+    Room * _current;
     int _currentRow;
     int _currentColum;
+	Item * _item = 0;
 public:
     int _row;
     int _colum;
     WorldMap();
+	~WorldMap(){ delete _item; delete[] &_map; delete _current;}
     void CreateMap();
     void AddRoom(int row, int colum, Room &room);
     Room GetRoom(int row, int colum);

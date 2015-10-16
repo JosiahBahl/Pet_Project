@@ -12,6 +12,7 @@ public:
     Item();
     Item(const std::string name, const std::string desc);
     virtual std::string Use() = 0;
+	virtual std::string GetType() = 0;
     std::string GetName();
 };
 

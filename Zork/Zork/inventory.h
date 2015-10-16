@@ -17,6 +17,7 @@ public:
     int GetSize();
     bool Contains(std::string name);
     int GetIndexOf(std::string name);
+	std::string PrintInventory();
 };
 
 #endif // INVENTORY_H

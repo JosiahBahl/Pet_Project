@@ -10,12 +10,12 @@ private:
     //
     int _health;
     //
-    Inventory _inventory;
+    Inventory * _inventory;
     //
     bool _dead;
 public:
     Player();
-    Inventory GetInventory();
+    Inventory* GetInventory();
 };
 
 #endif // PLAYER_H

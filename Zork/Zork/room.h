@@ -5,6 +5,7 @@
 #include <array>
 #include <iostream>
 #include "item.h"
+#include "weapon.h"
 #include <vector>
 
 class Room
@@ -15,26 +16,25 @@ protected:
     std::string _longDesc;
     //North,East,South,West
     std::array<char, 4> _exits;
-    std::vector<Item*> _items;
+	Item * _item;
 public:
     Room();
+	~Room();
     Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits);
-    Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits, std::vector<Item*> item);
+    Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits, Item * item);
     Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits);
-    Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits, std::vector<Item*> item);
+    Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits, Item * item);
     std::string getName();
     std::string getDesc();
     std::string getLongDesc();
     std::array<char, 4> getExits();
-    Item* getItem(std::string name);
-    std::vector<Item*> getItems();
+    Item* getItem();
     void setName(std::string& x);
     void setDesc(std::string& x);
     void setLongDesc(std::string& x);
     void setExits(std::array<char, 4> x);
     bool hasExit(char x);
-    bool hasItem(std::string x);
-    bool hasItems();
+    bool hasItem();
     std::string PrintExits();
 };
 
