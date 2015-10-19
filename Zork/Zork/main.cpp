@@ -23,6 +23,10 @@ std::string Display(std::string x)
     {
        temp = _map.GetCurrentRoom().PrintExits();
     }
+	else if (x == "inventory")
+	{
+		temp = _player.GetInventory()->PrintInventory();
+	}
     else{}
     return temp;
 }
@@ -35,13 +39,11 @@ std::string Look(std::string target)
 std::string Take(std::string item)
 {
     std::string temp = "You cannot take the "+item;
-    if(_map.GetCurrentRoom().hasItem(item))
+    if(_map.GetCurrentRoom().hasItem())
     {
-        std::cout<<"Room has item"<<std::endl;
-        if(!_player.GetInventory().Contains(item))
+        if(!_player.GetInventory()->Contains(item))
         {
-            std::cout<<"Player does not have item"<<std::endl;
-            temp = _player.GetInventory().AddItem(_map.GetCurrentRoom().getItem(item));
+            temp = _player.GetInventory()->AddItem(_map.GetCurrentRoom().getItem());
         }
         else
         {

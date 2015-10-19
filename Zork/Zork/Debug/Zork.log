@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿Build started 10/16/2015 12:46:39 AM.
      1>Project "C:\Users\Josiah Bahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
@@ -20,7 +21,33 @@
      1>c:\users\josiah bahl\desktop\pet_project\zork\zork\main.cpp(44): error C2660: 'Room::getItem' : function does not take 1 arguments
          Generating Code...
      1>Done Building Project "C:\Users\Josiah Bahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" (Build target(s)) -- FAILED.
+=======
+﻿Build started 10/16/2015 10:31:16 AM.
+     1>Project "C:\Users\jbahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Zork.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp player.cpp
+         player.cpp
+         main.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.lib" /MACHINE:X86 Debug\inventory.obj
+         Debug\item.obj
+         Debug\main.obj
+         Debug\parser.obj
+         Debug\player.obj
+         Debug\room.obj
+         Debug\stdafx.obj
+         Debug\weapon.obj
+         Debug\worldmap.obj
+         Debug\Zork.obj
+         Zork.vcxproj -> C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.exe
+     1>Done Building Project "C:\Users\jbahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" (Build target(s)).
+>>>>>>> 54307607e6e67510eb5d60450a82b4e95e98c2c5
 
-Build FAILED.
+Build succeeded.
 
+<<<<<<< HEAD
 Time Elapsed 00:00:01.14
+=======
+Time Elapsed 00:00:02.40
+>>>>>>> 54307607e6e67510eb5d60450a82b4e95e98c2c5

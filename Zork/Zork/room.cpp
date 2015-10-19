@@ -14,13 +14,21 @@ Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<
     _exits = exits;
 }
 
+<<<<<<< HEAD
 Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits, ItemBase &item)
+=======
+Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits, Item * item)
+>>>>>>> 54307607e6e67510eb5d60450a82b4e95e98c2c5
 {
     _roomName = name;
     _roomDesc = desc;
     _longDesc = lDesc;
     _exits = exits;
+<<<<<<< HEAD
 	_item = &item;
+=======
+    _item = item;
+>>>>>>> 54307607e6e67510eb5d60450a82b4e95e98c2c5
 }
 
 Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits)
@@ -31,13 +39,26 @@ Room::Room(const std::string& name, const std::string& desc, const std::string& 
     _exits = exits;
 }
 
+<<<<<<< HEAD
 Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits, Item &item)
+=======
+Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits, Item * item)
+>>>>>>> 54307607e6e67510eb5d60450a82b4e95e98c2c5
 {
     _roomName = name;
     _roomDesc = desc;
     _longDesc = lDesc;
     _exits = exits;
+<<<<<<< HEAD
 	_item = item;
+=======
+    _item = item;
+}
+
+Room::~Room()
+{
+
+>>>>>>> 54307607e6e67510eb5d60450a82b4e95e98c2c5
 }
 
 std::string Room::getName()
@@ -94,6 +115,7 @@ bool Room::hasExit(char x)
     return temp;
 }
 
+<<<<<<< HEAD
 Item Room::getItem()
 {
     return _item;
@@ -102,6 +124,16 @@ Item Room::getItem()
 bool Room::hasItem()
 {
 	return (_item != NULL) ? true : false;
+=======
+Item* Room::getItem()
+{
+    return _item;
+}
+
+bool Room::hasItem()
+{
+	return (_item) ? true : false;
+>>>>>>> 54307607e6e67510eb5d60450a82b4e95e98c2c5
 }
 //
 std::string Room::PrintExits()

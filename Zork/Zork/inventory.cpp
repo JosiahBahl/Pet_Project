@@ -9,7 +9,6 @@ Inventory::Inventory()
 //
 std::string Inventory::AddItem(Item *item)
 {
-    std::cout<<"Adding item"<<std::endl;
     std::string temp = "You already have a "+item->GetName()+" in your invenotry. You can only have one item at a time.";
     if(!Contains(item->GetName()))
     {
@@ -82,4 +81,14 @@ int Inventory::GetIndexOf(std::string name)
         else{}
     }
     return temp;
+}
+//
+std::string Inventory::PrintInventory()
+{
+	std::string temp = "";
+	for (int i = 0; i < _inventory.size(); i++)
+	{
+		temp += _inventory[i]->GetName() + ":" + _inventory[i]->GetType()+"\n";
+	}
+	return temp;
 }
