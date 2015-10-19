@@ -15,7 +15,7 @@ public class PlayerCameraControl : MonoBehaviour
     //
     public bool _canInteract = false;
     //
-    public static int Index = -1;
+    public static int Index = 0;
     //
     private void Update()
     {
@@ -40,16 +40,15 @@ public class PlayerCameraControl : MonoBehaviour
                 if (ObjectsIn.Contains(_hit.collider.gameObject))
                 {
                     PlayerCameraControl.Index = ObjectsIn.IndexOf(_hit.collider.gameObject);
-                    Interactions[PlayerCameraControl.Index].ShowPopup();
                 }
                 else
                 {
-                    PlayerCameraControl.Index = -1;
+                    PlayerCameraControl.Index = 0;
                 }
             }
             else
             {
-                PlayerCameraControl.Index = -1;
+                PlayerCameraControl.Index = 0;
             }
         }
     }
@@ -69,7 +68,7 @@ public class PlayerCameraControl : MonoBehaviour
     {
         int i = ObjectsIn.IndexOf(x);
         ObjectsIn.RemoveAt(i);
-        Interactions[i]._index = 0;
+        Interactions[i]._index = -1;
         Interactions.RemoveAt(i);
         if (ObjectsIn.Count == 0)
         {

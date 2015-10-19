@@ -1,27 +1,26 @@
-﻿Build started 10/15/2015 1:05:20 PM.
-     1>Project "C:\Users\jbahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" on node 2 (Build target(s)).
+﻿Build started 10/16/2015 12:46:39 AM.
+     1>Project "C:\Users\Josiah Bahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Zork.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt inventory.cpp
-         inventory.cpp
-     1>c:\users\jbahl\desktop\pet_project\zork\zork\inventory.cpp(60): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\jbahl\desktop\pet_project\zork\zork\inventory.cpp(75): warning C4018: '<' : signed/unsigned mismatch
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.lib" /MACHINE:X86 Debug\inventory.obj
-         Debug\item.obj
-         Debug\main.obj
-         Debug\parser.obj
-         Debug\player.obj
-         Debug\room.obj
-         Debug\stdafx.obj
-         Debug\weapon.obj
-         Debug\worldmap.obj
-         Debug\Zork.obj
-     1>worldmap.obj : error LNK2005: "public: __thiscall Weapon::Weapon(int,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >)" (??0Weapon@@QAE@HV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0@Z) already defined in weapon.obj
-     1>worldmap.obj : error LNK2005: "public: virtual class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > __thiscall Weapon::Use(void)" (?Use@Weapon@@UAE?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ) already defined in weapon.obj
-     1>LINK : warning LNK4067: ambiguous entry point; selected 'mainCRTStartup'
-     1>C:\Users\jbahl\Desktop\Pet_Project\Zork\Debug\Zork.exe : fatal error LNK1169: one or more multiply defined symbols found
-     1>Done Building Project "C:\Users\jbahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" (Build target(s)) -- FAILED.
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\Zork.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp room.cpp worldmap.cpp
+         worldmap.cpp
+     1>c:\users\josiah bahl\desktop\pet_project\zork\zork\worldmap.cpp(25): error C2440: '=' : cannot convert from '`anonymous-namespace'::Weapon *' to '`anonymous-namespace'::Item *'
+                 Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
+     1>c:\users\josiah bahl\desktop\pet_project\zork\zork\worldmap.cpp(32): error C2665: 'Room::Room' : none of the 6 overloads could convert all the argument types
+                 c:\users\josiah bahl\desktop\pet_project\zork\zork\room.h(23): could be 'Room::Room(const std::string &,const std::string &,const std::string &,std::array<char,4>,`anonymous-namespace'::Item &)'
+                 c:\users\josiah bahl\desktop\pet_project\zork\zork\room.h(21): or       'Room::Room(std::string &,std::string &,std::string &,std::array<char,4>,`anonymous-namespace'::Item &)'
+                 while trying to match the argument list '(const char [12], const char [91], const char [88], std::array<char,4>, std::vector<`anonymous-namespace'::Item,std::allocator<_Ty>>)'
+                 with
+                 [
+                     _Ty=`anonymous-namespace'::Item
+                 ]
+         room.cpp
+     1>c:\users\josiah bahl\desktop\pet_project\zork\zork\room.cpp(104): error C2676: binary '!=' : '`anonymous-namespace'::Item' does not define this operator or a conversion to a type acceptable to the predefined operator
+         main.cpp
+     1>c:\users\josiah bahl\desktop\pet_project\zork\zork\main.cpp(38): error C2660: 'Room::hasItem' : function does not take 1 arguments
+     1>c:\users\josiah bahl\desktop\pet_project\zork\zork\main.cpp(44): error C2660: 'Room::getItem' : function does not take 1 arguments
+         Generating Code...
+     1>Done Building Project "C:\Users\Josiah Bahl\Desktop\Pet_Project\Zork\Zork\Zork.vcxproj" (Build target(s)) -- FAILED.
 
 Build FAILED.
 
-Time Elapsed 00:00:02.18
+Time Elapsed 00:00:01.14

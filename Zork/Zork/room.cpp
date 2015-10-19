@@ -14,13 +14,13 @@ Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<
     _exits = exits;
 }
 
-Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits, std::vector<Item*> item)
+Room::Room(std::string& name, std::string& desc, std::string& lDesc, std::array<char, 4> exits, ItemBase &item)
 {
     _roomName = name;
     _roomDesc = desc;
     _longDesc = lDesc;
     _exits = exits;
-    _items = item;
+	_item = &item;
 }
 
 Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits)
@@ -31,13 +31,13 @@ Room::Room(const std::string& name, const std::string& desc, const std::string& 
     _exits = exits;
 }
 
-Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits, std::vector<Item*> item)
+Room::Room(const std::string& name, const std::string& desc, const std::string& lDesc, std::array<char, 4> exits, Item &item)
 {
     _roomName = name;
     _roomDesc = desc;
     _longDesc = lDesc;
     _exits = exits;
-    _items = item;
+	_item = item;
 }
 
 std::string Room::getName()
@@ -94,44 +94,14 @@ bool Room::hasExit(char x)
     return temp;
 }
 
-Item* Room::getItem(std::string name)
+Item Room::getItem()
 {
-    Item* temp = 0;
-    for(int i = 0; i < _items.size(); i++)
-    {
-        if(_items[i]->GetName() == name)
-        {
-            temp = _items[i];
-            break;
-        }
-    }
-    return temp;
+    return _item;
 }
 
-std::vector<Item*> Room::getItems()
+bool Room::hasItem()
 {
-    return _items;
-}
-
-bool Room::hasItem(std::string x)
-{
-    bool temp = false;
-    std::cout<<(*_items[0]).GetName()<<std::endl;
-    for(int i = 0; i < _items.size(); i++)
-    {
-        if((*_items[0]).GetName() == x)
-        {
-            temp = true;
-            break;
-        }
-    }
-    return temp;
-}
-
-bool Room::hasItems()
-{
-    return (_items.size() > 0) ? true : false;
-
+	return (_item != NULL) ? true : false;
 }
 //
 std::string Room::PrintExits()

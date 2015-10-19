@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClInclude Include="inventory.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="itemBase.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="room.h" />
@@ -92,6 +93,7 @@
   <ItemGroup>
     <ClCompile Include="inventory.cpp" />
     <ClCompile Include="item.cpp" />
+    <ClCompile Include="itemBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="player.cpp" />

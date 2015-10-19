@@ -6,7 +6,7 @@
 #include "room.h"
 #include <iostream>
 #include <vector>
-#include "item.h"
+#include "itemBase.h"
 #include "weapon.h"
 
 class WorldMap
@@ -16,10 +16,11 @@ private:
     Room _current;
     int _currentRow;
     int _currentColum;
+	std::vector<ItemBase*> _items;
 public:
     int _row;
     int _colum;
-    WorldMap();
+	WorldMap(){}
     void CreateMap();
     void AddRoom(int row, int colum, Room &room);
     Room GetRoom(int row, int colum);

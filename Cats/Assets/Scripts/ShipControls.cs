@@ -4,11 +4,14 @@ using System.Collections;
 public class ShipControls : Usable 
 {
     //
-    public float _vertAxis = 0f;
     public float _horiAxis = 0f;
-    public float _translationSpeed = 3f;
-    public float _rotationXSpeed = 2f;
-    public float _rotationYSpeed = 2f;
+    public float _rotationSpeed = 2f;
+    public float _rotation = 0f;
+    public float _speed = 0;
+    //
+    public Vector2 _minMaxWheelRot;
+    //
+    public bool _anchored = true;
 	// Use this for initialization
 	void Start ()
     {
@@ -18,27 +21,29 @@ public class ShipControls : Usable
 	// Update is called once per frame
 	void FixedUpdate () 
     {
+        if(!_anchored)
+        {
+            transform.Translate(Vector3.right * Time.deltaTime * _speed);
+        }
         if (_inUse)
         {
-            //-----------------------------------------------------------------------------------
-            //Player Control
-            _vertAxis = Input.GetAxis("Vertical");
             _horiAxis = Input.GetAxis("Horizontal");
-            if (_vertAxis > 0)
-            {
-                transform.Translate(0, 0, (_vertAxis * _translationSpeed) * Time.deltaTime);
-            }
-            else if (_vertAxis < 0)
-            {
-                transform.Translate(0, 0, (_vertAxis) * Time.deltaTime);
-            }
-            else { }
+            _rotation += _horiAxis;
+            _rotation = Mathf.Clamp(_rotation, _minMaxWheelRot.x, _minMaxWheelRot.y);
             //
-            if (_horiAxis != 0)
+            if (_horiAxis < -.1)
             {
-                transform.Translate((_horiAxis * _translationSpeed) * Time.deltaTime, 0, 0);
+                transform.Rotate(Vector3.up * (Time.deltaTime * (_rotation / _rotationSpeed)));
+                
             }
-            else { }
+            else if (_horiAxis > .1)
+            {
+                transform.Rotate(Vector3.up * (Time.deltaTime * (_rotation / _rotationSpeed)));
+            }
+            else 
+            {
+                _rotation = 0;
+            }
         }
 	}
     //
@@ -52,5 +57,17 @@ public class ShipControls : Usable
     {
         base.UnUse();
         PlayerControl.Controling = false;
+    }
+    //
+    public void DropAnchor()
+    {
+        Debug.Log("Drop");
+        _anchored = true;
+    }
+    //
+    public void RaiseAnchor()
+    {
+        Debug.Log("Raise");
+        _anchored = false;
     }
 }

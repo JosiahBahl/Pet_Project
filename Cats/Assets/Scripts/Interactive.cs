@@ -8,11 +8,10 @@ public class Interactive : MonoBehaviour
     //
     public int _index = 0;
     //
-    public Vector3 _position;
-    //
-    public Vector3 _rotation;
-    //
     public Usable _useableScript;
+    //
+    public Vector3 _popupPosition;
+    public Vector3 _popupRotation;
 	// Use this for initialization
 	void Start () 
     {
@@ -24,20 +23,30 @@ public class Interactive : MonoBehaviour
     {
         if(!_useableScript._inUse)
         {
-            if(PlayerCameraControl.Index != _index)
+            if (!_active)
             {
-                HidePopup();
+                if (PlayerCameraControl.Index == _index)
+                {
+                    ShowPopup();
+                }
             }
             else
             {
-                ShowPopup();
+                if (PlayerCameraControl.Index != _index)
+                {
+                    HidePopup();
+                }
+                if (Input.GetKeyDown("e"))
+                {
+                    _useableScript.Use();
+                }
             }
         }
         else
         {
-            if(Input.GetKeyDown("e"))
+            if (Input.GetKeyDown("e"))
             {
-
+                _useableScript.UnUse();
             }
         }
 	}
@@ -45,8 +54,8 @@ public class Interactive : MonoBehaviour
     public void ShowPopup()
     {
         GUIControl.InteractivePopup.SetActive(true);
-        GUIControl.InteractivePopup.transform.position = _position;
-        GUIControl.InteractivePopup.transform.rotation = Quaternion.Euler(_rotation);
+        GUIControl.InteractivePopup.transform.localPosition = _popupPosition;
+        GUIControl.InteractivePopup.transform.localEulerAngles = _popupRotation;
         _active = true;
     }
     //

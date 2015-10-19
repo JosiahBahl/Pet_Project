@@ -4,6 +4,8 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour 
 {
     public Transform _cameraRotation;
+    //
+    public GameObject _worldCanvas;
 	//
 	public float _vertAxis = 0f;
 	public float _horiAxis = 0f;
@@ -108,6 +110,11 @@ public class PlayerControl : MonoBehaviour
         {
             _cameraScript.AddInteraction(temp._interactiveObject, temp._interactiveObject.GetComponent<Interactive>());
         }
+        if(x.gameObject.tag == "moveable")
+        {
+            this.transform.parent = x.gameObject.transform;
+            GUIControl.InteractivePopup.transform.SetParent(x.gameObject.transform, true);
+        }
     }
     //
     private void OnTriggerExit(Collider x)
@@ -119,6 +126,11 @@ public class PlayerControl : MonoBehaviour
              {
                  _cameraScript.RemoveInteraction(temp._interactiveObject);
              }
+         }
+         if (x.gameObject.tag == "moveable")
+         {
+             this.transform.parent = null;
+            GUIControl.InteractivePopup.transform.SetParent(null, true);
          }
     }
 }

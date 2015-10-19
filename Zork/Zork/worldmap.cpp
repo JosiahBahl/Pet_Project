@@ -1,24 +1,17 @@
 #include "stdafx.h"
 #include "worldmap.h"
-#include "weapon.cpp"
-WorldMap::WorldMap()
-{
-
-}
 
 void WorldMap::CreateMap()
 {
-    std::array<char, 4> exits = {'n','0','0','0'};
-    Weapon broom(1, "Broom", "A shitty broom");
-    Item* item;
-    std::vector<Item*> items;
-    //
-    _map[0][25] = Room("Entrance",
-                       "An entrance way. You have an exit to the north",
-                       "The walls are made out of thick stone, there is some mold on the walls",
-                       exits);
-    //
-    exits = {'n','w','s','e'};
+	std::array<char, 4> exits = { 'n', '0', '0', '0' };
+	Weapon broom = Weapon(1, "Broom", "A shitty broom");
+	//
+	_map[0][25] = Room("Entrance",
+		"An entrance way. You have an exit to the north",
+		"The walls are made out of thick stone, there is some mold on the walls",
+		exits);
+	//
+	exits = {'n', 'w', 's', 'e'};
     //
     _map[1][25] = Room("Foyer",
                        "A large foyer, there is a chandalier hanging fromt he ceiling and two staircases that lead to the upper level. You have exits to the north, east, south and west.",
@@ -27,14 +20,10 @@ void WorldMap::CreateMap()
     //
     exits = {'n','0','0','0'};
     //
-    item = &broom;
-    items.clear();
-    items.push_back(item);
-    //
     _map[1][24] = Room("Broomcloset",
                        "You enter narrow closet filled with brooms. There is only the north exit back to the foyer",
                        "Its to dark in the broom closet to really see, you do see some brooms on the near wall.",
-                       exits, items);
+                       exits, broom);
     //
     _current = _map[0][25];
     _row = 0;
