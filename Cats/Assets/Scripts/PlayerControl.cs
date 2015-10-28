@@ -3,9 +3,11 @@ using System.Collections;
 
 public class PlayerControl : MonoBehaviour 
 {
-    public Transform _cameraRotation;
+    private Transform _cameraRotation;
     //
-    public GameObject _worldCanvas;
+    private GameObject _worldCanvas;
+	//
+	private Rigidbody _rigidbody;
 	//
 	public float _vertAxis = 0f;
 	public float _horiAxis = 0f;
@@ -25,11 +27,14 @@ public class PlayerControl : MonoBehaviour
 	//
 	private RaycastHit _hit;
     //
-    public PlayerCameraControl _cameraScript;
+    private PlayerCameraControl _cameraScript;
 	// Use this for initialization
 	void Start () 
 	{
-
+		_worldCanvas = GameObject.Find ("WorldCanvas");
+		_cameraScript = gameObject.GetComponentInChildren<PlayerCameraControl>();
+		_cameraRotation = _cameraScript.transform;
+		_rigidbody = gameObject.GetComponent<Rigidbody>();
 	}
 	
 	// Update is called once per frame
@@ -48,48 +53,51 @@ public class PlayerControl : MonoBehaviour
             y -= Input.GetAxis("JoystickMouseY") * _rotationYSpeed;
             y = Mathf.Clamp(y, _minMaxY.x, _minMaxY.y);
         }
-        _cameraRotation.localEulerAngles = new Vector3(y, _cameraRotation.rotation.y, 0f);
-        transform.Rotate(0, x, 0);
-        //-----------------------------------------------------------------------------------
-        //Player Control
-        _vertAxis = Input.GetAxis("Vertical");
-        _horiAxis = Input.GetAxis("Horizontal");
-        _jumpAxis = Input.GetAxis("Jump");
-        //
-        if (!Controling)
-        {
-            if (_vertAxis > 0)
-            {
-                transform.Translate(0, 0, (_vertAxis * _translationSpeed) * Time.deltaTime);
-            }
-            else if (_vertAxis < 0)
-            {
-                transform.Translate(0, 0, (_vertAxis) * Time.deltaTime);
-            }
-            else { }
-            //
-            if (_horiAxis != 0)
-            {
-                transform.Translate((_horiAxis * _translationSpeed) * Time.deltaTime, 0, 0);
-            }
-            else { }
-            //
-            if (_jumpAxis > 0 && !_jumping)
-            {
-                GetComponent<Rigidbody>().velocity = Vector3.zero;
-                GetComponent<Rigidbody>().AddForce(new Vector3(0, _jumpHeight * _jumpSpeed, 0));
-                _jumping = true;
-            }
-            //States
-            if (_vertAxis == 0 && _horiAxis == 0)
-            {
-                PlayerState.SetStopped(true);
-            }
-            else
-            {
-                PlayerState.SetStopped(false);
-            }
-        }
+		if(!ButtonControl.Opened)
+		{
+	        _cameraRotation.localEulerAngles = new Vector3(y, _cameraRotation.rotation.y, 0f);
+	        transform.Rotate(0, x, 0);
+	        //-----------------------------------------------------------------------------------
+	        //Player Control
+	        _vertAxis = Input.GetAxis("Vertical");
+	        _horiAxis = Input.GetAxis("Horizontal");
+	        _jumpAxis = Input.GetAxis("Jump");
+	        //
+	        if (!Controling)
+	        {
+	            if (_vertAxis > 0)
+	            {
+	                transform.Translate(0, 0, (_vertAxis * _translationSpeed) * Time.deltaTime);
+	            }
+	            else if (_vertAxis < 0)
+	            {
+	                transform.Translate(0, 0, (_vertAxis) * Time.deltaTime);
+	            }
+	            else { }
+	            //
+	            if (_horiAxis != 0)
+	            {
+	                transform.Translate((_horiAxis * _translationSpeed) * Time.deltaTime, 0, 0);
+	            }
+	            else { }
+	            //
+	            if (_jumpAxis > 0 && !_jumping)
+	            {
+	                GetComponent<Rigidbody>().velocity = Vector3.zero;
+	                GetComponent<Rigidbody>().AddForce(new Vector3(0, _jumpHeight * _jumpSpeed, 0));
+	                _jumping = true;
+	            }
+	            //States
+	            if (_vertAxis == 0 && _horiAxis == 0)
+	            {
+	                PlayerState.SetStopped(true);
+	            }
+	            else
+	            {
+	                PlayerState.SetStopped(false);
+	            }
+	        }
+		}
         //Debug.DrawLine(transform.position, new Vector3(0,-.3f,0), Color.red, Time.deltaTime);
         //
         if (_jumping && GetComponent<Rigidbody>().velocity.y < 0)
