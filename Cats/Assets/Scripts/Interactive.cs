@@ -5,6 +5,7 @@ public class Interactive : MonoBehaviour
 {
     //
     public bool _active = false;
+    private bool _buttonUp = true;
     //
     public int _index = 0;
     //
@@ -21,33 +22,34 @@ public class Interactive : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if(!_useableScript._inUse)
+        //
+        if (PlayerCameraControl.Index == _index && _active)
         {
-            if (!_active)
+            ShowPopup();
+            if(!_useableScript._inUse)
             {
-                if (PlayerCameraControl.Index == _index)
-                {
-                    ShowPopup();
-                }
-            }
-            else
-            {
-                if (PlayerCameraControl.Index != _index)
-                {
-                    HidePopup();
-                }
                 if (Input.GetKeyDown("e"))
                 {
                     _useableScript.Use();
+                    _buttonUp = false;
                 }
             }
         }
-        else
+        else if (PlayerCameraControl.Index != _index && _active)
+        {
+            HidePopup();
+        }
+        else { }
+        if (_active && _useableScript._inUse && _buttonUp)
         {
             if (Input.GetKeyDown("e"))
             {
                 _useableScript.UnUse();
             }
+        }
+        if(!_buttonUp && Input.GetKeyUp("e"))
+        {
+            _buttonUp = true;
         }
 	}
 
@@ -56,12 +58,10 @@ public class Interactive : MonoBehaviour
         GUIControl.InteractivePopup.SetActive(true);
         GUIControl.InteractivePopup.transform.localPosition = _popupPosition;
         GUIControl.InteractivePopup.transform.localEulerAngles = _popupRotation;
-        _active = true;
     }
     //
     public void HidePopup()
     {
         GUIControl.InteractivePopup.SetActive(false);
-        _active = false;
     }
 }

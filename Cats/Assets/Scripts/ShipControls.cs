@@ -61,13 +61,11 @@ public class ShipControls : Usable
     //
     public void DropAnchor()
     {
-        Debug.Log("Drop");
         _anchored = true;
     }
     //
     public void RaiseAnchor()
     {
-        Debug.Log("Raise");
         _anchored = false;
     }
 }

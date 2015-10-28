@@ -16,15 +16,16 @@ public class Anchor : Usable
 	
 	}
     //
-    public void Use()
+    public override void Use()
     {
+        Debug.Log("Anchor Use");
         _shipControls.DropAnchor();
         base.Use();
     }
     //
-    public void Unuse()
+    public override void UnUse()
     {
-        base.UnUse();
         _shipControls.RaiseAnchor();
+        base.UnUse();
     }
 }

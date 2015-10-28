@@ -43,12 +43,12 @@ public class PlayerCameraControl : MonoBehaviour
                 }
                 else
                 {
-                    PlayerCameraControl.Index = 0;
+                    PlayerCameraControl.Index = -2;
                 }
             }
             else
             {
-                PlayerCameraControl.Index = 0;
+                PlayerCameraControl.Index = -2;
             }
         }
     }
@@ -58,6 +58,7 @@ public class PlayerCameraControl : MonoBehaviour
         if (!ObjectsIn.Contains(x))
         {
             Interactions.Add(y);
+            y._active = true;
             y._index = Interactions.Count - 1;
             ObjectsIn.Add(x);
             _canInteract = true;
@@ -69,6 +70,7 @@ public class PlayerCameraControl : MonoBehaviour
         int i = ObjectsIn.IndexOf(x);
         ObjectsIn.RemoveAt(i);
         Interactions[i]._index = -1;
+        Interactions[i]._active = false;
         Interactions.RemoveAt(i);
         if (ObjectsIn.Count == 0)
         {
