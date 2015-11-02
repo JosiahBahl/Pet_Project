@@ -24,6 +24,9 @@ public class PlayerControl : MonoBehaviour
 	//
 	public bool _jumping = false;
     public static bool Controling = false;
+	public static bool LockMovement = false;
+	public static bool LockCamera = false;
+	public static bool LockAllMovement = false;
 	//
 	private RaycastHit _hit;
     //
@@ -53,17 +56,20 @@ public class PlayerControl : MonoBehaviour
             y -= Input.GetAxis("JoystickMouseY") * _rotationYSpeed;
             y = Mathf.Clamp(y, _minMaxY.x, _minMaxY.y);
         }
-		if(!ButtonControl.Opened)
+		if(!LockAllMovement)
 		{
-	        _cameraRotation.localEulerAngles = new Vector3(y, _cameraRotation.rotation.y, 0f);
-	        transform.Rotate(0, x, 0);
-	        //-----------------------------------------------------------------------------------
-	        //Player Control
-	        _vertAxis = Input.GetAxis("Vertical");
-	        _horiAxis = Input.GetAxis("Horizontal");
-	        _jumpAxis = Input.GetAxis("Jump");
+			if(!LockCamera)
+			{
+		        _cameraRotation.localEulerAngles = new Vector3(y, _cameraRotation.rotation.y, 0f);
+		        transform.Rotate(0, x, 0);
+		        //-----------------------------------------------------------------------------------
+		        //Player Control
+		        _vertAxis = Input.GetAxis("Vertical");
+		        _horiAxis = Input.GetAxis("Horizontal");
+		        _jumpAxis = Input.GetAxis("Jump");
+			}
 	        //
-	        if (!Controling)
+	        if (!LockMovement || !Controling)
 	        {
 	            if (_vertAxis > 0)
 	            {

@@ -1,12 +1,51 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class ButtonControl : MonoBehaviour 
 {
+	//
+	public class MainButton
+	{
+		//
+		public GameObject _object;
+		public RectTransform _rect;
+		public Image _image;
+		public bool _active;
+		//
+		public MainButton(GameObject obj, RectTransform rect, Image image, bool active)
+		{
+			_object = obj;
+			_rect = rect;
+			_image = image;
+			_active = active;
+		}
+		//
+		public void setImage(Image image)
+		{
+			_image = image;
+		}
+		//
+		public void setColor(Color color)
+		{
+			_image.color = color;
+		}
+		//
+		public void setActive(bool x)
+		{
+			_active = x;
+		}
+		//
+		public string Print()
+		{
+			string x = _object.name +", "+_rect.rect+", "+_image.color+", "+_active;
+			return x;
+		}
+	}
 	private Inventory _inventory;
 	//
-	public static bool Opened = false;
+	public bool _opened = false;
 	//
 	public int _index = 0;
 	//
@@ -14,32 +53,24 @@ public class ButtonControl : MonoBehaviour
 	public GameObject _buttonRow;
 	public GameObject _content;
 	//
-	public GameObject[] _buttons;
-	//
-	public RectTransform[] _buttonRects;
-	//
-	public Image[] _buttonImages;
+	public List<MainButton> _buttons = new List<MainButton>();
 	//
 	public Color[] _colors = new Color[3];
-	//
-	public bool[] _active;
 	//
 	public Vector3 _mousePosition;
 	// Use this for initialization
 	void Start () 
 	{
-		//_buttons = _buttonRow.GetComponentsInChildren<GameObject>();
-		_buttonRects = new RectTransform[_buttons.Length];
-		_buttonImages = new Image[_buttons.Length];
-		_active = new bool[_buttons.Length];
-		for(int i = 0; i < _buttons.Length; i++)
+		Image[] o = _buttonRow.GetComponentsInChildren<Image>();
+		for(int i = 0; i < o.Length; i++)
 		{
-			_buttonRects[i] = _buttons[i].GetComponent<RectTransform>();
-			_buttonImages[i] = _buttons[i].GetComponent<Image>();
-			_buttonImages[i].color = _colors[0];
-			_active[i] = false;
+			_buttons.Add(new MainButton(o[i].gameObject, o[i].GetComponent<RectTransform>(), o[i].GetComponent<Image>(), false));
 		}
 		_inventory = gameObject.GetComponent<Inventory>();
+		//
+		_background.SetActive(false);
+		_buttonRow.SetActive(false);
+		_content.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -47,34 +78,34 @@ public class ButtonControl : MonoBehaviour
 	{
 		_mousePosition = Input.mousePosition;
 		//
-		if(Input.GetKeyDown("q") && !Opened)
+		if(Input.GetKeyDown("q") && !_opened)
 		{
 			Open ();
 		}
-		else if(Input.GetKeyDown("q") && Opened)
+		else if(Input.GetKeyDown("q") && _opened)
 		{
 			Close ();
 		}
 		else{}
 		//
-		if(Opened)
+		if(_opened)
 		{
 			if(!DataControl.Controller)
 			{
-				for(int i = 0; i < _buttons.Length; i++)
+				for(int i = 0; i < _buttons.Count; i++)
 				{
-					if(OnHover(_mousePosition, _buttonRects[i]) && !_active[i])
+					if(OnHover(_mousePosition, _buttons[i]._rect) && !_buttons[i]._active)
 					{
-						_buttonImages[i].color = _colors[1];
+						_buttons[i].setColor(_colors[1]);
 						if(Input.GetKeyDown("mouse 0"))
 						{
-							_active[_index] = false;
+							_buttons[_index].setActive(false);
 							_index = i;
-							_active[i] = true;
+							_buttons[i].setActive(true);
 							switch(i)
 							{
 								case 0:
-									_inventory.Init(_content);
+									_inventory.Load(_content);
 									break;
 								default:
 									break;
@@ -82,13 +113,13 @@ public class ButtonControl : MonoBehaviour
 						}
 
 					}
-					else if(!_active[i])
+					else if(!_buttons[i]._active)
 					{
-						_buttonImages[i].color = _colors[0];
+						_buttons[i].setColor(_colors[0]);
 					}
 					else
 					{
-						_buttonImages[i].color = _colors[2];
+						_buttons[i].setColor(_colors[2]);
 					}
 				}
 	  	 	}
@@ -97,33 +128,44 @@ public class ButtonControl : MonoBehaviour
 
 			}
 		}
+		if(Input.GetKeyDown("p"))
+		{
+			for(int i = 0; i < _buttons.Count; i++)
+			{
+				Debug.Log (_buttons[i].Print());
+			}
+		}
 	}
 	//
 	public void Open()
 	{
-		Opened = true;
+		_opened = true;
 		_index = 0;
 		_background.SetActive(true);
 		_buttonRow.SetActive(true);
 		_content.SetActive(true);
-		for(int i = 0; i < _buttons.Length; i++)
+		for(int i = 0; i < _buttons.Count; i++)
 		{
-			_buttonImages[i].color = _colors[0];
-			_active[i] = false;
+			_buttons[i].setColor(_colors[0]);
+			_buttons[i].setActive(false);
 		}
-		_active[0] = true;
-		_buttonImages[0].color = _colors[2];
-		PlayerControl.Controling = true;
-		_inventory.Init(_content);
+		_buttons[0].setActive(true);
+		_buttons[0].setColor(_colors[2]);
+		PlayerControl.LockAllMovement = true;
+		_inventory.Load(_content);
 	}
 	//
 	public void Close()
 	{
-		Opened = false;
+		_opened = false;
 		_background.SetActive(false);
 		_buttonRow.SetActive(false);
 		_content.SetActive(false);
-		PlayerControl.Controling = false;
+		PlayerControl.LockAllMovement = false;
+		if(_buttons[0]._active)
+		{
+			_inventory.Unload(_content);
+		}
 	}
 	//
 	public bool OnHover(Vector3 mouse, RectTransform rect)

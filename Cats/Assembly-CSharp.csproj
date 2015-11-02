@@ -47,6 +47,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Anchor.cs" />
      <Compile Include="Assets\Scripts\ButtonControl.cs" />
+     <Compile Include="Assets\Scripts\Consumable.cs" />
      <Compile Include="Assets\Scripts\DataControl.cs" />
      <Compile Include="Assets\Scripts\GUIControl.cs" />
      <Compile Include="Assets\Scripts\Interactive.cs" />
