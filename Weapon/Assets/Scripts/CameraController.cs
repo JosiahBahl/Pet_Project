@@ -7,9 +7,9 @@ public class CameraController : MonoBehaviour
 	//
 	private PlayerController _playerScript;
 	//
-	public int _speed = 2;
+	public int _speed = 6;
 	//
-	public float _heightDistance = 4.5f;
+	public float _heightDistance = 4.75f;
 	//
 	public Vector2 _maxMinX;
 	//
@@ -29,28 +29,14 @@ public class CameraController : MonoBehaviour
 		{
 			this.transform.position = new Vector3(_playerPosition.position.x, _playerPosition.position.y+_heightDistance, this.transform.position.z);
 		}
+		else{}
 		if (!_playerScript.Moving)
 		{
 			Centered = false;
 		}
-		if (!Centering && (_playerPosition.position.x > (this.transform.position.x + _maxMinX.x)))
-		{
-			Centering = true;
-			StartCoroutine (CenterOnCharacter ());
-		}
-		else if (!Centering && (_playerPosition.position.x < (this.transform.position.x - _maxMinX.x)))
-		{
-			Centering = true;
-			StartCoroutine (CenterOnCharacter ());
-		}
 		else{}
-	}
-	//
-	public IEnumerator CenterOnCharacter()
-	{
-		while (!Centered)
+		if(Centering)
 		{
-			Debug.Log ("Centering");
 			if (_playerPosition.position.x > (this.transform.position.x+_maxMinX.y))
 			{
 				this.transform.Translate (Vector3.right * Time.deltaTime * _speed);
@@ -64,7 +50,15 @@ public class CameraController : MonoBehaviour
 				Centering = false;
 				Centered = true;
 			}
-			yield return null;
+		}
+		else
+		{
+			if((_playerPosition.position.x < (this.transform.position.x - _maxMinX.x)) || 
+			   (_playerPosition.position.x > (this.transform.position.x + _maxMinX.x)))
+			{
+				Centering = true;
+			}
+			else{}
 		}
 	}
 }
