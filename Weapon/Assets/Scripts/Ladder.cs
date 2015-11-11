@@ -4,8 +4,6 @@ using System.Collections;
 public class Ladder : MonoBehaviour 
 {
 	//
-	public GameObject[] _doors;
-	//
 	public float _height = 0;
 	//
 	public bool _up = false;

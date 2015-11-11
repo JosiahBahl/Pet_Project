@@ -10,8 +10,7 @@ public class PlayerController : MonoBehaviour
 	public bool Blocking = false;
 	public bool ByLadder = false;
 	public bool Climing = false;
-	private bool _climingUp = false;
-	private bool _climingDown = false;
+	private bool _climingDone = false;
 	private bool _movingLeft = false;
 	private bool _movingRight = false;
     //
@@ -22,11 +21,12 @@ public class PlayerController : MonoBehaviour
     public float _jumpHeight = 350f;
 	public float _comboTime = .5f;
 	public float _comboTimer = 0f;
+	public float _climgSpeed = 4;
     //
     public Vector3 _velocity = new Vector3(0, 0, 0);
 	//
 	private RaycastHit _hit;
-	private float _distToGround = .5f;
+	private float _distToGround = 1f;
 	//
 	public int _combo = 0;
 	//
@@ -39,7 +39,6 @@ public class PlayerController : MonoBehaviour
         _rigidbody = this.gameObject.GetComponent<Rigidbody>();
 		_gui = GameObject.Find("PlayerUI").GetComponent<PlayerGUI>();
 	}
-	
 	// Update is called once per frame
 	void Update () 
     {
@@ -59,56 +58,53 @@ public class PlayerController : MonoBehaviour
 			{
 				Moving = false;
 			}
-			#if UNITY_IPHONE || UNITY_ANDROID
-
-			#endif
-            #if UNITY_EDITOR || UNITY_STANDALONE
-			//
-			//_direction = Input.GetAxis("Horizontal");
-			//
-            if(Input.GetKeyDown("space"))
-            {
-				Jump ();
-            }
-            #endif
 			//
 			_velocity = new Vector3(_direction * _speed, _rigidbody.velocity.y, 0);
 			//
 			_rigidbody.velocity = _velocity;
         }
 		//
-		if(Physics.Raycast(transform.position, Vector3.down, out _hit, _distToGround))
-		{
-			if(_hit.collider.gameObject.tag == "Ground")
-			{
-				Grounded = true;
-			}
-		}
-		else
-		{
-			Grounded = false;
-		}
-		//
 		if ((Time.timeSinceLevelLoad >= _comboTimer) && (_combo != 0)) 
 		{
 			_combo = 0;
+		}
+		if(!Climing && _climingDone)
+		{
+			_climingDone = false;
+			LockMovement = false;
+			_rigidbody.useGravity = true;
+			gameObject.layer = 8;
 		}
     }
 	//
 	public void MoveUp()
 	{
-		if (ByLadder) 
+		if(!LockMovement)
 		{
-			Climing = true;
-			_rigidbody.useGravity = false;
-			transform.position = new Vector3(_ladder.transform.position.x, transform.position.y, transform.position.z);
-			gameObject.layer = 9;
-			StartCoroutine(Climb(_ladder));
-		} 
-		else 
-		{
-			Jump ();
+			if (ByLadder && !Climing) 
+			{
+				Climing = true;
+				LockMovement = true;
+				_rigidbody.useGravity = false;
+				_movingLeft = false;
+				_movingRight = false;
+				//
+				transform.position = new Vector3(_ladder.transform.position.x, transform.position.y, transform.position.z);
+				//
+				gameObject.layer = 9;
+				//
+				_velocity = Vector3.zero;
+				_rigidbody.velocity = _velocity;
+				_direction = 0;
+				//
+				StartCoroutine(Climb(_ladder));
+			} 
+			else 
+			{
+				Jump ();
+			}
 		}
+		else{}
 	}
 	//
 	public void Jump()
@@ -122,72 +118,91 @@ public class PlayerController : MonoBehaviour
 	//
 	public void MoveLeft(bool x)
 	{
-		if(!_movingRight && !_movingLeft && x && Grounded)
+		if(!LockMovement)
 		{
-			_movingLeft = true;
-			_direction = -1;
-		}
-		else if(_movingLeft && !x)
-		{
-			_movingLeft = false;
-			_direction = 0;
+			if(!_movingRight && !_movingLeft && x && Grounded)
+			{
+				_movingLeft = true;
+				_direction = -1;
+			}
+			else if(_movingLeft && !x)
+			{
+				_movingLeft = false;
+				_direction = 0;
+			}
+			else{}
 		}
 		else{}
 	}
 	//
 	public void MoveRight(bool x)
 	{
-		if(!_movingRight && !_movingLeft && x && Grounded)
+		if(!LockMovement)
 		{
-			_movingRight = true;
-			_direction = 1;
-		}
-		else if(_movingRight && !x)
-		{
-			_movingRight = false;
-			_direction = 0;
+			if(!_movingRight && !_movingLeft && x && Grounded)
+			{
+				_movingRight = true;
+				_direction = 1;
+			}
+			else if(_movingRight && !x)
+			{
+				_movingRight = false;
+				_direction = 0;
+			}
+			else{}
 		}
 		else{}
 	}
 	//
 	public void setBlocking(bool x)
 	{
-		Blocking = x;
+		if(!LockMovement)
+		{
+			Blocking = x;
+		}
+		else{}
 	}
 	//
 	public void Attack()
 	{
-		if (_combo < 3) 
+		if(!LockMovement)
 		{
-			_comboTimer = Time.timeSinceLevelLoad + _comboTime;
-			_combo++;
-		} 
-		else 
-		{
-			_comboTimer = Time.timeSinceLevelLoad + _comboTime;
-			_combo = 1;
+			if (_combo < 3) 
+			{
+				_comboTimer = Time.timeSinceLevelLoad + _comboTime;
+				_combo++;
+			} 
+			else 
+			{
+				_comboTimer = Time.timeSinceLevelLoad + _comboTime;
+				_combo = 1;
+			}
 		}
+		else{}
 	}
 	//
 	public void OnTriggerEnter(Collider c)
 	{
-		if(c.gameObject.tag == "LadderUp")
+		if(!Climing)
 		{
-			_gui.setVertText("Climb");
-			ByLadder = true;
-			_ladder = c.transform.parent.GetComponent<Ladder>();
-			_ladder._up = true;
-		}
-		else if(c.gameObject.tag == "LadderDown")
-		{
-			_gui.setVertText("Descend");
-			ByLadder = true;
-			_ladder = c.transform.parent.GetComponent<Ladder>();
-			_ladder._up = false;
-		}
-		else
-		{
-		
+			if(c.gameObject.tag == "LadderUp")
+			{
+				_gui.setVertText("C");
+				ByLadder = true;
+				_ladder = c.transform.parent.GetComponent<Ladder>();
+				_ladder._up = true;
+			}
+			else if(c.gameObject.tag == "LadderDown")
+			{
+				_gui.setVertText("D");
+				ByLadder = true;
+				_ladder = c.transform.parent.GetComponent<Ladder>();
+				_ladder._up = false;
+			}
+			else
+			{
+			
+			}
 		}
 	}
 	//
@@ -214,7 +229,7 @@ public class PlayerController : MonoBehaviour
 			{
 				if(transform.position.y < positionY+ladder._height)
 				{
-					transform.Translate(Vector3.up*Time.deltaTime);
+					transform.Translate(Vector3.up*Time.deltaTime*_climgSpeed);
 				}
 				else
 				{
@@ -225,7 +240,7 @@ public class PlayerController : MonoBehaviour
 			{
 				if(transform.position.y > positionY-ladder._height)
 				{
-					transform.Translate(Vector3.down*Time.deltaTime);
+					transform.Translate(Vector3.down*Time.deltaTime*_climgSpeed);
 				}
 				else
 				{
@@ -234,6 +249,7 @@ public class PlayerController : MonoBehaviour
 			}
 			yield return null;
 		}
+		_climingDone = true;
 		yield return null;
 	}
 }

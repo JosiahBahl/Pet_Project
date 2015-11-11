@@ -11,7 +11,10 @@ public class CameraController : MonoBehaviour
 	//
 	public float _heightDistance = 4.75f;
 	//
+	private Vector3 _position;
+	//
 	public Vector2 _maxMinX;
+	public Vector4 _maxMinY;
 	//
 	public bool Centered = false;
 	public bool Centering = false;
@@ -30,22 +33,31 @@ public class CameraController : MonoBehaviour
 			this.transform.position = new Vector3(_playerPosition.position.x, _playerPosition.position.y+_heightDistance, this.transform.position.z);
 		}
 		else{}
-		if (!_playerScript.Moving)
+		if (!_playerScript.Moving && _playerScript.Grounded)
 		{
 			Centered = false;
 		}
 		else{}
 		if(Centering)
 		{
+			_position = new Vector3(_playerPosition.position.x, _playerPosition.position.y+_heightDistance, transform.position.z);
 			if (_playerPosition.position.x > (this.transform.position.x+_maxMinX.y))
 			{
-				this.transform.Translate (Vector3.right * Time.deltaTime * _speed);
+				transform.position = Vector3.MoveTowards(transform.position, _position, Time.deltaTime*_speed);
 			}
-			else if (_playerPosition.position.x < (this.transform.position.x-_maxMinX.y))
+			if (_playerPosition.position.x < (this.transform.position.x-_maxMinX.y))
 			{
-				this.transform.Translate (Vector3.left * Time.deltaTime * _speed);
+				transform.position = Vector3.MoveTowards(transform.position, _position, Time.deltaTime*_speed);
 			}
-			else
+			if (_playerPosition.position.y > (this.transform.position.y+_maxMinY.w))
+			{
+				transform.position = Vector3.MoveTowards(transform.position, _position, Time.deltaTime*_speed);
+			}
+			if (_playerPosition.position.y < (this.transform.position.y-_maxMinY.y))
+			{
+				transform.position = Vector3.MoveTowards(transform.position, _position, Time.deltaTime*_speed);
+			}
+			if(PlayerInMinBounds())
 			{
 				Centering = false;
 				Centered = true;
@@ -53,12 +65,70 @@ public class CameraController : MonoBehaviour
 		}
 		else
 		{
-			if((_playerPosition.position.x < (this.transform.position.x - _maxMinX.x)) || 
-			   (_playerPosition.position.x > (this.transform.position.x + _maxMinX.x)))
+			if(_playerScript.Climing)
 			{
-				Centering = true;
+				this.transform.position = new Vector3(_playerPosition.position.x, _playerPosition.position.y+_heightDistance, this.transform.position.z);
 			}
-			else{}
+			else
+			{
+				if(!PlayerInMaxBounds())
+				{
+					Centering = true;
+				}
+				else{}
+			}
 		}
+	}
+	//
+	public bool PlayerInMaxBounds()
+	{
+		bool temp = false;
+		if (_playerPosition.position.x > (this.transform.position.x+_maxMinX.x))
+		{
+			temp = false;
+		}
+		else if (_playerPosition.position.x < (this.transform.position.x-_maxMinX.x))
+		{
+			temp = false;
+		}
+		else if (_playerPosition.position.y > (this.transform.position.y+_maxMinY.z))
+		{
+			temp = false;
+		}
+		else if (_playerPosition.position.y < (this.transform.position.y-_maxMinY.x))
+		{
+			temp = false;
+		}
+		else
+		{
+			temp = true;
+		}
+		return temp;
+	}
+	//
+	public bool PlayerInMinBounds()
+	{
+		bool temp = false;
+		if (_playerPosition.position.x > (this.transform.position.x+_maxMinX.y))
+		{
+			temp = false;
+		}
+		else if (_playerPosition.position.x < (this.transform.position.x-_maxMinX.y))
+		{
+			temp = false;
+		}
+		else if (_playerPosition.position.y > (this.transform.position.y+_maxMinY.w))
+		{
+			temp = false;
+		}
+		else if (_playerPosition.position.y < (this.transform.position.y-_maxMinY.y))
+		{
+			temp = false;
+		}
+		else
+		{
+			temp = true;
+		}
+		return temp;
 	}
 }
