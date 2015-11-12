@@ -10,9 +10,11 @@ public class PlayerController : MonoBehaviour
 	public bool Blocking = false;
 	public bool ByLadder = false;
 	public bool Climing = false;
+    public bool OnPlatform = false;
 	private bool _climingDone = false;
 	private bool _movingLeft = false;
 	private bool _movingRight = false;
+    private bool _dropping = false;
     //
     private Rigidbody _rigidbody;
     //
@@ -75,11 +77,16 @@ public class PlayerController : MonoBehaviour
 			_rigidbody.useGravity = true;
 			gameObject.layer = 8;
 		}
+        if(_dropping && Grounded)
+        {
+            _dropping = false;
+            gameObject.layer = 8;
+        }
     }
 	//
 	public void MoveUp()
 	{
-		if(!LockMovement)
+		if(!LockMovement && Grounded)
 		{
 			if (ByLadder && !Climing) 
 			{
@@ -97,19 +104,47 @@ public class PlayerController : MonoBehaviour
 				_rigidbody.velocity = _velocity;
 				_direction = 0;
 				//
-				StartCoroutine(Climb(_ladder));
+				StartCoroutine(Climb(_ladder, true));
 			} 
-			else 
-			{
-				Jump ();
-			}
 		}
 		else{}
 	}
+    //
+    public void MoveDown()
+    {
+        if (!LockMovement && Grounded)
+        {
+            if (ByLadder && !Climing)
+            {
+                Climing = true;
+                LockMovement = true;
+                _rigidbody.useGravity = false;
+                _movingLeft = false;
+                _movingRight = false;
+                //
+                transform.position = new Vector3(_ladder.transform.position.x, transform.position.y, transform.position.z);
+                //
+                gameObject.layer = 9;
+                //
+                _velocity = Vector3.zero;
+                _rigidbody.velocity = _velocity;
+                _direction = 0;
+                //
+                StartCoroutine(Climb(_ladder, false));
+            }
+            else if(OnPlatform)
+            {
+                Grounded = false;
+                _dropping = true;
+                gameObject.layer = 9;
+            }
+        }
+        else { }
+    }
 	//
 	public void Jump()
 	{
-		if(Grounded)
+		if(Grounded && !LockMovement)
 		{
 			_rigidbody.AddForce(Vector3.up*_jumpHeight);
 			Grounded = false;
@@ -187,14 +222,12 @@ public class PlayerController : MonoBehaviour
 		{
 			if(c.gameObject.tag == "LadderUp")
 			{
-				_gui.setVertText("C");
 				ByLadder = true;
 				_ladder = c.transform.parent.GetComponent<Ladder>();
 				_ladder._up = true;
 			}
 			else if(c.gameObject.tag == "LadderDown")
 			{
-				_gui.setVertText("D");
 				ByLadder = true;
 				_ladder = c.transform.parent.GetComponent<Ladder>();
 				_ladder._up = false;
@@ -210,7 +243,6 @@ public class PlayerController : MonoBehaviour
 	{
 		if((c.gameObject.tag == "LadderUp") || (c.gameObject.tag == "LadderDown"))
 		{
-			_gui.setVertText("^");
 			ByLadder = false;
 			_ladder = null;
 		}
@@ -219,13 +251,21 @@ public class PlayerController : MonoBehaviour
 			
 		}
 	}
+    //
+    public void OnCollisionEnter(Collision c)
+    {
+        if((c.gameObject.tag == "Ground" || c.gameObject.tag == "Platform")&& !Grounded)
+        {
+            _direction = 0;
+        }
+    }
 	//
-	public IEnumerator Climb(Ladder ladder)
+	public IEnumerator Climb(Ladder ladder, bool up)
 	{
 		float positionY = transform.position.y;
 		while(Climing)
 		{
-			if(ladder._up)
+			if(up)
 			{
 				if(transform.position.y < positionY+ladder._height)
 				{

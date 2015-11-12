@@ -21,8 +21,8 @@ public class CameraController : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		_playerPosition = GameObject.FindGameObjectWithTag ("Player").GetComponent<Transform> ();
-		_playerScript = GameObject.FindGameObjectWithTag ("Player").GetComponent<PlayerController> ();
+		_playerPosition = GameObject.Find ("Player").GetComponent<Transform> ();
+		_playerScript = GameObject.Find("Player").GetComponent<PlayerController> ();
 	}
 	
 	// Update is called once per frame

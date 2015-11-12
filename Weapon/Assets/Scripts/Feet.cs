@@ -18,9 +18,17 @@ public class Feet : MonoBehaviour
 	//
 	public void OnTriggerEnter(Collider c)
 	{
-		if(c.tag == "Ground")
+        if ((c.tag == "Ground" || c.tag == "Platform"))
 		{
 			_playerScript.Grounded = true;
 		}
+        if(c.tag == "Platform")
+        {
+            _playerScript.OnPlatform = true;
+        }
+        else
+        {
+            _playerScript.OnPlatform = false;
+        }
 	}
 }
