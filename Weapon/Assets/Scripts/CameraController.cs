@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour
 {
 	private Transform _playerPosition;
 	//
-	private PlayerController _playerScript;
+	private PlayerData _data;
 	//
 	public int _speed = 6;
 	//
@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
 	void Start () 
 	{
 		_playerPosition = GameObject.Find ("Player").GetComponent<Transform> ();
-		_playerScript = GameObject.Find("Player").GetComponent<PlayerController> ();
+		_data = GameObject.Find("Player").GetComponent<PlayerData> ();
 	}
 	
 	// Update is called once per frame
@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
 			this.transform.position = new Vector3(_playerPosition.position.x, _playerPosition.position.y+_heightDistance, this.transform.position.z);
 		}
 		else{}
-		if (!_playerScript.Moving && _playerScript.Grounded)
+		if (!_data.Moving && _data.Grounded)
 		{
 			Centered = false;
 		}
@@ -65,7 +65,7 @@ public class CameraController : MonoBehaviour
 		}
 		else
 		{
-			if(_playerScript.Climing)
+			if(_data.Climing)
 			{
 				this.transform.position = new Vector3(_playerPosition.position.x, _playerPosition.position.y+_heightDistance, this.transform.position.z);
 			}

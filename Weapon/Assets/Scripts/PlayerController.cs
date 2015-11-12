@@ -3,14 +3,8 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour 
 {
+	private PlayerData _data;
     //
-    public bool LockMovement = false;
-    public bool Moving = false;
-    public bool Grounded = false;
-	public bool Blocking = false;
-	public bool ByLadder = false;
-	public bool Climing = false;
-    public bool OnPlatform = false;
 	private bool _climingDone = false;
 	private bool _movingLeft = false;
 	private bool _movingRight = false;
@@ -21,25 +15,18 @@ public class PlayerController : MonoBehaviour
     public float _speed = 3f;
     public float _direction = 0f;
     public float _jumpHeight = 350f;
-	public float _comboTime = .5f;
-	public float _comboTimer = 0f;
 	public float _climgSpeed = 4;
     //
     public Vector3 _velocity = new Vector3(0, 0, 0);
 	//
-	private RaycastHit _hit;
-	private float _distToGround = 1f;
-	//
-	public int _combo = 0;
-	//
-	private PlayerGUI _gui;
-	//
 	private Ladder _ladder;
+	//
+	public Weapon _weapon;
 	// Use this for initialization
 	void Start () 
     {
         _rigidbody = this.gameObject.GetComponent<Rigidbody>();
-		_gui = GameObject.Find("PlayerUI").GetComponent<PlayerGUI>();
+		_data = this.gameObject.GetComponent<PlayerData>();
 	}
 	// Update is called once per frame
 	void Update () 
@@ -49,16 +36,16 @@ public class PlayerController : MonoBehaviour
     //
     void FixedUpdate()
     {
-        if(!LockMovement)
+		if(!_data.LockMovement)
         {
 			//
 			if(_direction != 0)
 			{
-				Moving = true;
+				_data.Moving = true;
 			}
 			else
 			{
-				Moving = false;
+				_data.Moving = false;
 			}
 			//
 			_velocity = new Vector3(_direction * _speed, _rigidbody.velocity.y, 0);
@@ -66,18 +53,14 @@ public class PlayerController : MonoBehaviour
 			_rigidbody.velocity = _velocity;
         }
 		//
-		if ((Time.timeSinceLevelLoad >= _comboTimer) && (_combo != 0)) 
-		{
-			_combo = 0;
-		}
-		if(!Climing && _climingDone)
+		if(!_data.Climing && _climingDone)
 		{
 			_climingDone = false;
-			LockMovement = false;
+			_data.LockMovement = false;
 			_rigidbody.useGravity = true;
 			gameObject.layer = 8;
 		}
-        if(_dropping && Grounded)
+		if(_dropping && _data.Grounded)
         {
             _dropping = false;
             gameObject.layer = 8;
@@ -86,12 +69,12 @@ public class PlayerController : MonoBehaviour
 	//
 	public void MoveUp()
 	{
-		if(!LockMovement && Grounded)
+		if(!_data.LockMovement && _data.Grounded)
 		{
-			if (ByLadder && !Climing) 
+			if (_data.ByLadder && !_data.Climing) 
 			{
-				Climing = true;
-				LockMovement = true;
+				_data.Climing = true;
+				_data.LockMovement = true;
 				_rigidbody.useGravity = false;
 				_movingLeft = false;
 				_movingRight = false;
@@ -112,12 +95,12 @@ public class PlayerController : MonoBehaviour
     //
     public void MoveDown()
     {
-        if (!LockMovement && Grounded)
+		if (!_data.LockMovement && _data.Grounded)
         {
-            if (ByLadder && !Climing)
+			if (_data.ByLadder && !_data.Climing)
             {
-                Climing = true;
-                LockMovement = true;
+				_data.Climing = true;
+				_data.LockMovement = true;
                 _rigidbody.useGravity = false;
                 _movingLeft = false;
                 _movingRight = false;
@@ -132,9 +115,9 @@ public class PlayerController : MonoBehaviour
                 //
                 StartCoroutine(Climb(_ladder, false));
             }
-            else if(OnPlatform)
+			else if(_data.OnPlatform)
             {
-                Grounded = false;
+				_data.Grounded = false;
                 _dropping = true;
                 gameObject.layer = 9;
             }
@@ -144,18 +127,18 @@ public class PlayerController : MonoBehaviour
 	//
 	public void Jump()
 	{
-		if(Grounded && !LockMovement)
+		if(_data.Grounded && !_data.LockMovement)
 		{
 			_rigidbody.AddForce(Vector3.up*_jumpHeight);
-			Grounded = false;
+			_data.Grounded = false;
 		}
 	}
 	//
 	public void MoveLeft(bool x)
 	{
-		if(!LockMovement)
+		if(!_data.LockMovement)
 		{
-			if(!_movingRight && !_movingLeft && x && Grounded)
+			if(!_movingRight && !_movingLeft && x && _data.Grounded)
 			{
 				_movingLeft = true;
 				_direction = -1;
@@ -172,9 +155,9 @@ public class PlayerController : MonoBehaviour
 	//
 	public void MoveRight(bool x)
 	{
-		if(!LockMovement)
+		if(!_data.LockMovement)
 		{
-			if(!_movingRight && !_movingLeft && x && Grounded)
+			if(!_movingRight && !_movingLeft && x && _data.Grounded)
 			{
 				_movingRight = true;
 				_direction = 1;
@@ -191,26 +174,20 @@ public class PlayerController : MonoBehaviour
 	//
 	public void setBlocking(bool x)
 	{
-		if(!LockMovement)
+		if(!_data.LockMovement)
 		{
-			Blocking = x;
+			_data.Blocking = x;
 		}
 		else{}
 	}
 	//
 	public void Attack()
 	{
-		if(!LockMovement)
+		if(!_data.LockMovement)
 		{
-			if (_combo < 3) 
+			if(_weapon != null)
 			{
-				_comboTimer = Time.timeSinceLevelLoad + _comboTime;
-				_combo++;
-			} 
-			else 
-			{
-				_comboTimer = Time.timeSinceLevelLoad + _comboTime;
-				_combo = 1;
+				_weapon.Attack();
 			}
 		}
 		else{}
@@ -218,17 +195,17 @@ public class PlayerController : MonoBehaviour
 	//
 	public void OnTriggerEnter(Collider c)
 	{
-		if(!Climing)
+		if(!_data.Climing)
 		{
 			if(c.gameObject.tag == "LadderUp")
 			{
-				ByLadder = true;
+				_data.ByLadder = true;
 				_ladder = c.transform.parent.GetComponent<Ladder>();
 				_ladder._up = true;
 			}
 			else if(c.gameObject.tag == "LadderDown")
 			{
-				ByLadder = true;
+				_data.ByLadder = true;
 				_ladder = c.transform.parent.GetComponent<Ladder>();
 				_ladder._up = false;
 			}
@@ -243,7 +220,7 @@ public class PlayerController : MonoBehaviour
 	{
 		if((c.gameObject.tag == "LadderUp") || (c.gameObject.tag == "LadderDown"))
 		{
-			ByLadder = false;
+			_data.ByLadder = false;
 			_ladder = null;
 		}
 		else
@@ -254,7 +231,7 @@ public class PlayerController : MonoBehaviour
     //
     public void OnCollisionEnter(Collision c)
     {
-        if((c.gameObject.tag == "Ground" || c.gameObject.tag == "Platform")&& !Grounded)
+		if((c.gameObject.tag == "Ground" || c.gameObject.tag == "Platform")&& !_data.Grounded)
         {
             _direction = 0;
         }
@@ -263,7 +240,7 @@ public class PlayerController : MonoBehaviour
 	public IEnumerator Climb(Ladder ladder, bool up)
 	{
 		float positionY = transform.position.y;
-		while(Climing)
+		while(_data.Climing)
 		{
 			if(up)
 			{
@@ -273,7 +250,7 @@ public class PlayerController : MonoBehaviour
 				}
 				else
 				{
-					Climing = false;
+					_data.Climing = false;
 				}
 	  	 	}
 			else
@@ -284,7 +261,7 @@ public class PlayerController : MonoBehaviour
 				}
 				else
 				{
-					Climing = false;
+					_data.Climing = false;
 				}
 			}
 			yield return null;

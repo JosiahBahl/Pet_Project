@@ -3,11 +3,11 @@ using System.Collections;
 
 public class Feet : MonoBehaviour 
 {
-	private PlayerController _playerScript;
+	private PlayerData _data;
 	// Use this for initialization
 	void Start () 
 	{
-		_playerScript = transform.parent.GetComponent<PlayerController>();
+		_data = transform.parent.GetComponent<PlayerData>();
 	}
 	
 	// Update is called once per frame
@@ -20,15 +20,15 @@ public class Feet : MonoBehaviour
 	{
         if ((c.tag == "Ground" || c.tag == "Platform"))
 		{
-			_playerScript.Grounded = true;
+			_data.Grounded = true;
 		}
         if(c.tag == "Platform")
         {
-            _playerScript.OnPlatform = true;
+			_data.OnPlatform = true;
         }
         else
         {
-            _playerScript.OnPlatform = false;
+			_data.OnPlatform = false;
         }
 	}
 }
