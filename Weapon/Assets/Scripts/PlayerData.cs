@@ -11,6 +11,7 @@ public class PlayerData : MonoBehaviour
 	public bool ByLadder = false;
 	public bool Climing = false;
 	public bool OnPlatform = false;
+    public bool Attacking = false;
 	private bool _regenerating = false;
 	private bool _stopRegen = false;
 	private bool _startRegen = false;
@@ -22,10 +23,13 @@ public class PlayerData : MonoBehaviour
 	public float _staminaRegen = .5f;
 	//
 	private PlayerGUI _gui;
+    //
+    private Animator _animator;
 	// Use this for initialization
 	void Start () 
 	{
 		_gui = GameObject.Find("PlayerUI").GetComponent<PlayerGUI>();
+        _animator = this.GetComponent<Animator>();
 	}
 	// Update is called once per frame
 	void Update () 
@@ -41,6 +45,14 @@ public class PlayerData : MonoBehaviour
 			StartCoroutine(RegenStamina(_staminaRegen));
 			_startRegen = false;
 		}
+        if (!Moving && !Attacking && Grounded && !Blocking && !LockMovement)
+        {
+            _animator.SetBool("Idle", true);
+        }
+        else
+        {
+            _animator.SetBool("Idle", false);
+        }
 	}
 	//
 	public IEnumerator RegenStamina(float x)
@@ -64,4 +76,9 @@ public class PlayerData : MonoBehaviour
 	{
 		_stopRegen = true;
 	}
+    //
+    public Animator GetAnimator()
+    {
+        return _animator;
+    }
 }

@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public float _direction = 0f;
     public float _jumpHeight = 350f;
 	public float _climgSpeed = 4;
+    public float _rotationSpeed = 4;
     //
     public Vector3 _velocity = new Vector3(0, 0, 0);
 	//
@@ -25,8 +26,8 @@ public class PlayerController : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
-        _rigidbody = this.gameObject.GetComponent<Rigidbody>();
-		_data = this.gameObject.GetComponent<PlayerData>();
+        _rigidbody = this.GetComponent<Rigidbody>();
+		_data = this.GetComponent<PlayerData>();
 	}
 	// Update is called once per frame
 	void Update () 
@@ -51,6 +52,7 @@ public class PlayerController : MonoBehaviour
 			_velocity = new Vector3(_direction * _speed, _rigidbody.velocity.y, 0);
 			//
 			_rigidbody.velocity = _velocity;
+            //
         }
 		//
 		if(!_data.Climing && _climingDone)
@@ -142,11 +144,14 @@ public class PlayerController : MonoBehaviour
 			{
 				_movingLeft = true;
 				_direction = -1;
+                _data.GetAnimator().SetFloat("Direction", _direction);
+                StartCoroutine(Rotate(180));
 			}
 			else if(_movingLeft && !x)
 			{
 				_movingLeft = false;
 				_direction = 0;
+                _data.GetAnimator().SetFloat("Direction", _direction);
 			}
 			else{}
 		}
@@ -161,11 +166,14 @@ public class PlayerController : MonoBehaviour
 			{
 				_movingRight = true;
 				_direction = 1;
+                _data.GetAnimator().SetFloat("Direction", _direction);
+                StartCoroutine(Rotate(0));
 			}
 			else if(_movingRight && !x)
 			{
 				_movingRight = false;
 				_direction = 0;
+                _data.GetAnimator().SetFloat("Direction", _direction);
 			}
 			else{}
 		}
@@ -269,4 +277,14 @@ public class PlayerController : MonoBehaviour
 		_climingDone = true;
 		yield return null;
 	}
+    public IEnumerator Rotate(int amount)
+    {
+        Quaternion rotation = transform.rotation;
+        for (float t = 0f; t < 1f; t+= Time.deltaTime*_rotationSpeed)
+        {
+            transform.rotation = Quaternion.Lerp(rotation, Quaternion.Euler(0, amount, 0), t);
+            yield return null;
+        }
+        yield return null;
+    }
 }

@@ -26,19 +26,24 @@ public class Weapon : MonoBehaviour
 		{
 			_combo = 0;
 			_data.StartStaminaRegen();
+            _data.GetAnimator().SetInteger("Combo", _combo);
+            _data.Attacking = false;
 		}
 	}
 	//
 	public void Attack()
 	{
 		_data.StopStaminaRegen();
+        _data.Attacking = true;
 		if (_combo < 3) 
 		{
 			_combo++;
+            _data.GetAnimator().SetInteger("Combo", _combo);
 		} 
 		else 
 		{
 			_combo = 1;
+            _data.GetAnimator().SetInteger("Combo", _combo);
 		}
 		if(_data._stamina >= _staminaUsage[_combo-1])
 		{
@@ -49,6 +54,8 @@ public class Weapon : MonoBehaviour
 		{
 			_combo = 0;
 			_data.StartStaminaRegen();
+            _data.GetAnimator().SetInteger("Combo", _combo);
+            _data.Attacking = false;
 		}
 	}
 }
