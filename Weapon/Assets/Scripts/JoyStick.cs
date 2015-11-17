@@ -12,10 +12,17 @@ public class JoyStick : MonoBehaviour
     private Image _image;
     //
     public Vector2 _mousePosition;
+	public Vector4 _bounds;
+	public Vector4 _dampeningBounds;
+	//
+	public PlayerController _movementScript;
 	// Use this for initialization
 	void Start () 
     {
         _image = this.GetComponent<Image>();
+		_bounds = new Vector4(((_image.rectTransform.sizeDelta.x - (_top.rectTransform.sizeDelta.x*2))*-1), ((_image.rectTransform.sizeDelta.y - (_top.rectTransform.sizeDelta.y*2))*-1), (_image.rectTransform.sizeDelta.x - (_top.rectTransform.sizeDelta.x*2)), (_image.rectTransform.sizeDelta.y - (_top.rectTransform.sizeDelta.y*2)));
+		_movementScript = GameObject.Find("Player").GetComponent<PlayerController>();
+		_dampeningBounds = new Vector4(Mathf.Ceil(_bounds.x/4), Mathf.Ceil(_bounds.y/4), Mathf.Ceil(_bounds.z/4), Mathf.Ceil(_bounds.w/4));
 	}
 	
 	// Update is called once per frame
@@ -24,15 +31,28 @@ public class JoyStick : MonoBehaviour
         _mousePosition = Input.mousePosition;
 	    if(Dragging)
         {
-            if (InBounds(_top))
-            {
-                _top.rectTransform.anchoredPosition = new Vector2((_top.rectTransform.sizeDelta.x - _mousePosition.x) * -1, (_top.rectTransform.sizeDelta.y - _mousePosition.y) * -1);
-            }
-            else 
-            {
-                _top.rectTransform.anchoredPosition = new Vector2(_top.rectTransform.anchoredPosition.x-1, _top.rectTransform.anchoredPosition.y-1);
-            }
+			_top.rectTransform.anchoredPosition = new Vector2(Mathf.Clamp((_top.rectTransform.sizeDelta.x - _mousePosition.x) * -1,_bounds.x,_bounds.z), 
+			                                                  Mathf.Clamp((_top.rectTransform.sizeDelta.y - _mousePosition.y) * -1, _bounds.y, _bounds.w));
         }
+		else{}
+		//
+		if(Released)
+		{
+			_top.rectTransform.anchoredPosition = Vector2.zero;
+		}
+		else{}
+		if(_top.rectTransform.anchoredPosition.x > _dampeningBounds.x)
+		{
+			_movementScript.MoveLeft(true);
+		}
+		else
+		{
+			_movementScript.MoveLeft(false);
+		}
+		if(_top.rectTransform.anchoredPosition.x < _dampeningBounds.z)
+		{
+
+		}
 	}
     //
     public void setDragging(bool x)
@@ -43,17 +63,5 @@ public class JoyStick : MonoBehaviour
     public void setReleased(bool x)
     {
         Released = x;
-    }
-    //
-    public bool InBounds(Image x)
-    {
-        bool temp = false;
-        if ((_top.rectTransform.anchoredPosition.x + _top.rectTransform.sizeDelta.x) < (_image.rectTransform.sizeDelta.x - _top.rectTransform.sizeDelta.x)
-            && (_top.rectTransform.anchoredPosition.y + _top.rectTransform.sizeDelta.y) < (_image.rectTransform.sizeDelta.y - _top.rectTransform.sizeDelta.y))
-        {
-            temp = true;
-        }
-        else { }
-        return temp;
     }
 }

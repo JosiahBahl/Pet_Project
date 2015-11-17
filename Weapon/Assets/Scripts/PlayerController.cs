@@ -39,6 +39,10 @@ public class PlayerController : MonoBehaviour
     {
 		if(!_data.LockMovement)
         {
+			if(_movingLeft && _data.Grounded)
+			{
+				_direction = -1;
+			}
 			//
 			if(_direction != 0)
 			{
@@ -140,12 +144,10 @@ public class PlayerController : MonoBehaviour
 	{
 		if(!_data.LockMovement)
 		{
-			if(!_movingRight && !_movingLeft && x && _data.Grounded)
+			if(!_movingLeft && _data.Grounded)
 			{
-				_movingLeft = true;
-				_direction = -1;
-                _data.GetAnimator().SetFloat("Direction", _direction);
-                StartCoroutine(Rotate(180));
+
+				StartCoroutine(Rotate(180));
 			}
 			else if(_movingLeft && !x)
 			{
