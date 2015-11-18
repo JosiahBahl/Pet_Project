@@ -22,7 +22,7 @@ public class JoyStick : MonoBehaviour
         _image = this.GetComponent<Image>();
 		_bounds = new Vector4(((_image.rectTransform.sizeDelta.x - (_top.rectTransform.sizeDelta.x*2))*-1), ((_image.rectTransform.sizeDelta.y - (_top.rectTransform.sizeDelta.y*2))*-1), (_image.rectTransform.sizeDelta.x - (_top.rectTransform.sizeDelta.x*2)), (_image.rectTransform.sizeDelta.y - (_top.rectTransform.sizeDelta.y*2)));
 		_movementScript = GameObject.Find("Player").GetComponent<PlayerController>();
-		_dampeningBounds = new Vector4(Mathf.Ceil(_bounds.x/4), Mathf.Ceil(_bounds.y/4), Mathf.Ceil(_bounds.z/4), Mathf.Ceil(_bounds.w/4));
+		_dampeningBounds = new Vector4(Mathf.Ceil(_bounds.x/4), Mathf.Ceil(_bounds.y/3), Mathf.Ceil(_bounds.z/4), Mathf.Ceil(_bounds.w/3));
 	}
 	
 	// Update is called once per frame
@@ -41,18 +41,27 @@ public class JoyStick : MonoBehaviour
 			_top.rectTransform.anchoredPosition = Vector2.zero;
 		}
 		else{}
-		if(_top.rectTransform.anchoredPosition.x > _dampeningBounds.x)
+		if(_top.rectTransform.anchoredPosition.x < _dampeningBounds.x)
 		{
-			_movementScript.MoveLeft(true);
+            _movementScript.Move(-1);
 		}
-		else
-		{
-			_movementScript.MoveLeft(false);
-		}
-		if(_top.rectTransform.anchoredPosition.x < _dampeningBounds.z)
-		{
-
-		}
+		else if (_top.rectTransform.anchoredPosition.x > _dampeningBounds.z)
+        {
+            _movementScript.Move(1);
+        }
+        else 
+        {
+            _movementScript.Move(0);
+        }
+        if(_top.rectTransform.anchoredPosition.y < _dampeningBounds.y)
+        {
+            _movementScript.Move(-2);
+        }
+        else if(_top.rectTransform.anchoredPosition.y > _dampeningBounds.z)
+        {
+            _movementScript.Move(2);
+        }
+        else { }
 	}
     //
     public void setDragging(bool x)

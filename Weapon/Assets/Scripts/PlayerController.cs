@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rigidbody;
     //
     public float _speed = 3f;
-    public float _direction = 0f;
+    public int _direction = 0;
     public float _jumpHeight = 350f;
 	public float _climgSpeed = 4;
     public float _rotationSpeed = 4;
@@ -39,24 +39,23 @@ public class PlayerController : MonoBehaviour
     {
 		if(!_data.LockMovement)
         {
-			if(_movingLeft && _data.Grounded)
-			{
-				_direction = -1;
-			}
 			//
 			if(_direction != 0)
 			{
 				_data.Moving = true;
+                _data.GetAnimator().SetBool("Idle", false);
 			}
 			else
 			{
 				_data.Moving = false;
+                _data.GetAnimator().SetBool("Idle", true);
 			}
 			//
 			_velocity = new Vector3(_direction * _speed, _rigidbody.velocity.y, 0);
 			//
 			_rigidbody.velocity = _velocity;
             //
+            _data.GetAnimator().SetInteger("Direction", _direction);
         }
 		//
 		if(!_data.Climing && _climingDone)
@@ -75,9 +74,9 @@ public class PlayerController : MonoBehaviour
 	//
 	public void MoveUp()
 	{
-		if(!_data.LockMovement && _data.Grounded)
+        if (!_data.LockMovement && _data.Grounded)
 		{
-			if (_data.ByLadder && !_data.Climing) 
+            if (_data.ByLadder && !_data.Climing && _ladder._up) 
 			{
 				_data.Climing = true;
 				_data.LockMovement = true;
@@ -103,7 +102,7 @@ public class PlayerController : MonoBehaviour
     {
 		if (!_data.LockMovement && _data.Grounded)
         {
-			if (_data.ByLadder && !_data.Climing)
+			if (_data.ByLadder && !_data.Climing && !_ladder._up)
             {
 				_data.Climing = true;
 				_data.LockMovement = true;
@@ -140,44 +139,40 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 	//
-	public void MoveLeft(bool x)
+	public void Move(int direction)
 	{
 		if(!_data.LockMovement)
 		{
-			if(!_movingLeft && _data.Grounded)
+			if(!_movingLeft && _data.Grounded && direction == -1)
 			{
-
+                _movingLeft = true;
+                _movingRight = false;
 				StartCoroutine(Rotate(180));
+                _direction = -1;
 			}
-			else if(_movingLeft && !x)
+			else if(!_movingRight && _data.Grounded && direction == 1)
 			{
-				_movingLeft = false;
-				_direction = 0;
-                _data.GetAnimator().SetFloat("Direction", _direction);
-			}
-			else{}
-		}
-		else{}
-	}
-	//
-	public void MoveRight(bool x)
-	{
-		if(!_data.LockMovement)
-		{
-			if(!_movingRight && !_movingLeft && x && _data.Grounded)
-			{
-				_movingRight = true;
-				_direction = 1;
-                _data.GetAnimator().SetFloat("Direction", _direction);
+                _movingLeft = false;
+                _movingRight = true;
                 StartCoroutine(Rotate(0));
+                _direction = 1;
 			}
-			else if(_movingRight && !x)
-			{
-				_movingRight = false;
-				_direction = 0;
-                _data.GetAnimator().SetFloat("Direction", _direction);
-			}
-			else{}
+            else if (direction == 0)
+            {
+                _movingLeft = false;
+                _movingRight = false;
+                _direction = 0;
+            }
+            else { }
+            if(direction == 2)
+            {
+                MoveUp();
+            }
+            else if (direction == -2)
+            {
+                MoveDown();
+            }
+            else { }
 		}
 		else{}
 	}
