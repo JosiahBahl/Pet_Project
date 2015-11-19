@@ -30,21 +30,20 @@ public class PlayerData : MonoBehaviour
 	{
 		_gui = GameObject.Find("PlayerUI").GetComponent<PlayerGUI>();
         _animator = this.GetComponent<Animator>();
+		StartCoroutine(RegenStamina(_staminaRegen));
 	}
 	// Update is called once per frame
 	void Update () 
 	{
 		_gui._staminaBar.value = _stamina;
-		if(_stopRegen && _regenerating)
-		{
-			StopCoroutine("RegenStamina");
-			_stopRegen = false;
-		}
+		//
 		if(_startRegen && !_regenerating)
 		{
+			_regenerating = true;
 			StartCoroutine(RegenStamina(_staminaRegen));
 			_startRegen = false;
 		}
+		//
         if (!Moving && !Attacking && Grounded && !Blocking && !LockMovement)
         {
             _animator.SetBool("Idle", true);
@@ -57,8 +56,7 @@ public class PlayerData : MonoBehaviour
 	//
 	public IEnumerator RegenStamina(float x)
 	{
-		_regenerating = true;
-		while(_stamina < 100)
+		while(_stamina < 100 && _regenerating)
 		{
 			_stamina++;
 			yield return new WaitForSeconds(x);
@@ -75,6 +73,7 @@ public class PlayerData : MonoBehaviour
 	public void StopStaminaRegen()
 	{
 		_stopRegen = true;
+		_regenerating = false;
 	}
     //
     public Animator GetAnimator()
