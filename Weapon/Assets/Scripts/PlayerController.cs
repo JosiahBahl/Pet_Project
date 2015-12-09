@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
 	public int _direction = 0;
     //Velocty of player
     public Vector3 _velocity = new Vector3(0, 0, 0);
+    //
+    public Vector4 _joyStickBounds;
 	//Ladder var for if were near one
 	private Ladder _ladder;
 	//Weapon var for our current equiped weapon
@@ -37,6 +39,45 @@ public class PlayerController : MonoBehaviour
 		//If the player can move
 		if(!_data.LockMovement)
         {
+#if UNITY_STANDALONE
+            if(Input.GetAxis("Horizontal") < _joyStickBounds.x)
+            {
+                Move(-1);
+            }
+            else if(Input.GetAxis("Horizontal") > _joyStickBounds.z)
+            {
+                Move(1);
+            }
+            else
+            {
+                Move(0);
+            }
+            if(Input.GetAxis("Vertical") < _joyStickBounds.w)
+            {
+                Move(-2);
+            }
+            else if (Input.GetAxis("Vertical") > _joyStickBounds.y)
+            {
+                Move(2);
+            }
+            else { }
+            if(Input.GetButtonDown("Attack"))
+            {
+                Attack();
+            }
+            if(Input.GetButtonDown("Block"))
+            {
+                setBlocking(true);
+            }
+            else if (Input.GetButtonUp("Block"))
+            {
+                setBlocking(false);
+            }
+            if(Input.GetButtonDown("Jump"))
+            {
+                Jump();
+            }
+#endif
 			//Check to see if we are moving
 			if(_direction != 0)
 			{
